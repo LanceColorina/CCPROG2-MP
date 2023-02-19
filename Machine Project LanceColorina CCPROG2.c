@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include <conio.h>
 
 void interface(int *result)
 {
@@ -46,18 +47,27 @@ void Play()
 	printf("This is the Play");
 }
 
-void Exit()
+int Exit()
 {
-	printf("You will now Exit");
+	return 0;
 }
 
 void ManageStart(char passWord[], int n)
 {
+	int i;
 	char EnteredPassword[n];
 	while (password(passWord, n, EnteredPassword) != 0)
 	{
 		printf("Please Enter your password (Maximum of 20 characters): ");
-		scanf("%s", &*EnteredPassword);
+		
+		for(i = 0; i < n; i++)
+		{
+			EnteredPassword[i] = getch();
+			printf("*");
+		}
+			EnteredPassword[i] = '\0';
+			printf("\n");
+	
 		password(passWord, n, EnteredPassword);
 		if (password(passWord, n, EnteredPassword) == 1)
 		{
