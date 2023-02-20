@@ -2,26 +2,27 @@
 #include<string.h>
 #include <conio.h>
 
-void interface(int *result)
+void interface(char *result)
 {
-	while(*result == 0)
+	while(*result == '\0')
 	{
 		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
-		scanf("%d", &*result);
+		scanf("%c", &*result);
+		scanf("%c", &*result);
 			switch(*result)
 			{
-				case 1:
-					*result = 1;
+				case '1':
+					*result = '1';
 					break;
-				case 2:
-					*result = 2;
+				case '2':
+					*result = '2';
 					break;
-				case 3:
-					*result = 3;
+				case '3':
+					*result = '3';
 					break;
 				default:
 					printf("The Character is not listed in the directory, Please enter a new Character.\n");
-					*result = 0;
+					*result = '\0';
 					break;	
 			}
 	}
@@ -49,6 +50,7 @@ void Play()
 
 int Exit()
 {
+	printf("You are now exiting the program\n");
 	return 0;
 }
 
@@ -58,7 +60,7 @@ void ManageStart(char passWord[], int n)
 	char EnteredPassword[n];
 	while (password(passWord, n, EnteredPassword) != 0)
 	{
-		printf("Please Enter your password (Maximum of 20 characters): ");
+		printf("Please Enter your password: ");
 		
 		for(i = 0; i < n; i++)
 		{
@@ -81,21 +83,21 @@ void ManageStart(char passWord[], int n)
 
 int main()
 {
-	int result;
+	char result;
 	char password[21];
-	printf("Hello user, Before we start please input a password as an admin:\n");
+	printf("Hello user, Before we start please input a password as an admin: ");
 	scanf("%s", &*password);
 	interface(&result);
 	
 	switch(result)
 	{
-		case 1:
+		case '1':
 			ManageStart(password, strlen(password));
 			break;
-		case 2:
+		case '2':
 			Play();
 			break;
-		case 3:
+		case '3':
 			Exit();
 			break;
 	}	
