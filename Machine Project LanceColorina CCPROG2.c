@@ -29,7 +29,6 @@ void interface(char *result)
 }
 
 
-
 int password(char password[], int n, char EnteredPassword[])
 {
 	int i;
@@ -54,9 +53,10 @@ int Exit()
 	return 0;
 }
 
-void ManageStart(char passWord[], int n)
+void ManageStart(char passWord[], int n, char *result)
 {
-	int i;
+	int i,pick;
+	char choice;
 	char EnteredPassword[n];
 	while (password(passWord, n, EnteredPassword) != 0)
 	{
@@ -73,13 +73,52 @@ void ManageStart(char passWord[], int n)
 		password(passWord, n, EnteredPassword);
 		if (password(passWord, n, EnteredPassword) == 1)
 		{
-			printf("Incorrect Password, Please try again\n");
-			password(passWord, n, EnteredPassword);
+			printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
+			scanf("%c", &choice);
+			scanf("%c", &choice);
+			
+			
+			switch(choice)
+			{
+				case 'Y':
+					password(passWord, n, EnteredPassword);
+					break;
+				case 'N':
+					*result = '\0';
+					interface(result);
+					break;
+				default:
+					do{
+						pick = 1;
+						printf("Character Input is not listed in the Directory please try again\n");
+						printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
+						scanf("%c", &choice);
+						scanf("%c", &choice);
+						if(choice == 'Y'){
+							pick = 0;
+							password(passWord, n, EnteredPassword);
+						}
+						if (choice == 'N')
+						{
+							pick = 0;
+							*result = '\0';
+							interface(result);
+						}
+					}while(pick != 0);
+					
+					break;
+			}
+		
 		}
 	}
 	
 		printf("The password is correct you are pogi HIHI");
 }
+
+void recordManager(){
+	
+}
+
 
 int main()
 {
@@ -92,7 +131,7 @@ int main()
 	switch(result)
 	{
 		case '1':
-			ManageStart(password, strlen(password));
+			ManageStart(password, strlen(password), &result);
 			break;
 		case '2':
 			Play();
