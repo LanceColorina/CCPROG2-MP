@@ -1,34 +1,17 @@
 #include<stdio.h>
 #include<string.h>
-#include <conio.h>
-
-void interface(char *result)
-{
-	while(*result == '\0')
-	{
-		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
-		scanf("%c", &*result);
-		scanf("%c", &*result);
-			switch(*result)
-			{
-				case '1':
-					*result = '1';
-					break;
-				case '2':
-					*result = '2';
-					break;
-				case '3':
-					*result = '3';
-					break;
-				default:
-					printf("The Character is not listed in the directory, Please enter a new Character.\n");
-					*result = '\0';
-					break;	
-			}
-	}
+#include<conio.h>
+void addRecord(){
+	printf("You are now adding a record");
 }
 
+void editRecord(){
+	printf("You are now editing a record");
+}
 
+void deleteRecord(){
+	printf("You are now deleting a record");
+}
 int password(char password[], int n, char EnteredPassword[])
 {
 	int i;
@@ -39,17 +22,6 @@ int password(char password[], int n, char EnteredPassword[])
 			return 1;
 		}
 	}
-	return 0;
-}
-
-void Play()
-{
-	printf("This is the Play");
-}
-
-int Exit()
-{
-	printf("You are now exiting the program\n");
 	return 0;
 }
 
@@ -85,7 +57,7 @@ void ManageStart(char passWord[], int n, char *result)
 					break;
 				case 'N':
 					*result = '\0';
-					interface(result);
+					interface(result, passWord);
 					break;
 				default:
 					do{
@@ -102,7 +74,7 @@ void ManageStart(char passWord[], int n, char *result)
 						{
 							pick = 0;
 							*result = '\0';
-							interface(result);
+							interface(result, passWord);
 						}
 					}while(pick != 0);
 					
@@ -112,34 +84,86 @@ void ManageStart(char passWord[], int n, char *result)
 		}
 	}
 	
-		printf("The password is correct you are pogi HIHI");
 }
 
-void recordManager(){
-	
+void recordManager(char *result, char password[]){
+	int choice1;
+	char choice2;
+	printf("Welcome to the manager data interface, which features would you like to use? (1 - Add, 2 - Edit, 3 - Delete) ");
+	scanf("%d", &choice1);
+	switch(choice1)
+	{
+		case 1:
+			addRecord();
+			break;
+		case 2:
+			editRecord();
+			break;
+		case 3:
+			deleteRecord();
+			break;
+		default:
+			choice2 = '\0';
+			printf("Choice of feature is not listed in the directory\n");
+			printf("Would you like to return to the interface or try again? (1 - try again, 2 - return interface) ");
+			scanf("%c", &choice2);
+			scanf("%c", &choice2);
+			if(choice2 == '2'){
+				*result = '\0';
+				interface(&*result, password);
+			}
+			if(choice2 == '1'){
+				recordManager(&*result, password);
+			}
+			
+			break;
+	}
 }
 
+void interface(char *result, char password[])
+{
+
+	while(*result == '\0')
+	{
+		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
+		scanf("%c", &*result);
+			switch(*result)
+			{
+				case '1':
+					ManageStart(password, strlen(password), &*result);
+					recordManager(&*result, password);
+				 	break;
+				case '2':
+					Play();
+					break;
+				case '3':
+					Exit();
+					break;
+				default:
+					printf("The Character is not listed in the directory, Please enter a new Character.\n");
+					*result = '\0';
+					break;	
+			}
+	}
+}
+
+void Play()
+{
+	printf("This is the Play");
+}
+
+int Exit()
+{
+	printf("You are now exiting the program\n");
+	return 0;
+}
 
 int main()
 {
 	char result;
-	char password[21];
-	printf("Hello user, Before we start please input a password as an admin: ");
-	scanf("%s", &*password);
-	interface(&result);
+	char password[21] = "Lance";
+	interface(&result, password);
 	
-	switch(result)
-	{
-		case '1':
-			ManageStart(password, strlen(password), &result);
-			break;
-		case '2':
-			Play();
-			break;
-		case '3':
-			Exit();
-			break;
-	}	
 	return 0;
 	
 }
