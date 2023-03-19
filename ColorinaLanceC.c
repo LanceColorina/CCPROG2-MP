@@ -96,7 +96,7 @@ void ManageStart(char passWord[], int n, char *result)
 	
 }
 
-void recordManager(char *result, char password[]){
+void recordManager(char *result, char password[], records quiz[]){
 	system("cls");
 	int choice1;
 	char choice2;
@@ -127,14 +127,14 @@ void recordManager(char *result, char password[]){
 				interface(&*result, password);
 			}
 			if(choice2 == '1'){
-				recordManager(&*result, password);
+				recordManager(&*result, password, quiz);
 			}
 			
 			break;
 	}
 }
 
-void interface(char *result, char password[])
+void interface(char *result, char password[], records quiz[])
 {
 
 	while(*result == '\0')
@@ -146,11 +146,11 @@ void interface(char *result, char password[])
 				case '1':
 					system("cls");
 					ManageStart(password, strlen(password), &*result);
-					recordManager(&*result, password);
+					recordManager(&*result, password, quiz);
 				 	break;
 				case '2':
 					system("cls");
-					Play();
+					PlayInterface(&*result, password,quiz);
 					break;
 				case '3':
 					system("cls");
@@ -165,12 +165,38 @@ void interface(char *result, char password[])
 	}
 }
 
-void Play()
+void PlayInterface(char *result, char password[], records quiz[])
 {
-	printf("This is the Play");
+	char choice;
+	printf("Welcome to the main hub of ""Who doesn't want to fail CCPROG2""\n");
+	printf("Which options would you like to use?(1 - Play, 2 - View Scores, 3 - Exit) ");
+	scanf("%c", &choice);
+	scanf("%c", &choice);
+	
+	switch(choice){
+		case '1':
+			system("cls");
+			//playGame();
+			break;
+		case '2':
+			system("cls");
+			//scores();
+			break;
+		case '3':
+			system("cls");
+			*result = '\0';
+			interface(&*result, password, quiz);
+			break;
+		default:
+			system("cls");
+			printf("Choice input is not listed in the directory, Please try again\n");
+			PlayInterface(&*result, password,quiz);
+			break;
+	}
+	
 }
 
-int Exit()
+void Exit()
 {
 	printf("You are now exiting the program\n");
 	printf("Thank you for playing");
@@ -181,7 +207,9 @@ int main()
 {
 	char result;
 	char password[21] = "Lance";
-	interface(&result, password);
+	records quiz[7];
+	
+	interface(&result, password,quiz);
 	
 	return 0;
 	
