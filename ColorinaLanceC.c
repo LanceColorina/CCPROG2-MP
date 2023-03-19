@@ -1,6 +1,16 @@
 #include<stdio.h>
 #include<string.h>
 #include<conio.h>
+typedef struct records{
+	char topic[21];
+	char question[151];
+	char choice1[31];
+	char choice2[31];
+	char choice3[31];
+	char answer[31];
+} records;
+
+
 void addRecord(){
 	printf("You are now adding a record");
 }
@@ -87,6 +97,7 @@ void ManageStart(char passWord[], int n, char *result)
 }
 
 void recordManager(char *result, char password[]){
+	system("cls");
 	int choice1;
 	char choice2;
 	printf("Welcome to the manager data interface, which features would you like to use? (1 - Add, 2 - Edit, 3 - Delete) ");
@@ -94,12 +105,15 @@ void recordManager(char *result, char password[]){
 	switch(choice1)
 	{
 		case 1:
+			system("cls");
 			addRecord();
 			break;
 		case 2:
+			system("cls");
 			editRecord();
 			break;
 		case 3:
+			system("cls");
 			deleteRecord();
 			break;
 		default:
@@ -130,18 +144,22 @@ void interface(char *result, char password[])
 			switch(*result)
 			{
 				case '1':
+					system("cls");
 					ManageStart(password, strlen(password), &*result);
 					recordManager(&*result, password);
 				 	break;
 				case '2':
+					system("cls");
 					Play();
 					break;
 				case '3':
+					system("cls");
 					Exit();
 					break;
 				default:
 					printf("The Character is not listed in the directory, Please enter a new Character.\n");
 					*result = '\0';
+					system("cls");
 					break;	
 			}
 	}
@@ -155,6 +173,7 @@ void Play()
 int Exit()
 {
 	printf("You are now exiting the program\n");
+	printf("Thank you for playing");
 	return 0;
 }
 
