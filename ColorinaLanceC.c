@@ -14,6 +14,7 @@ typedef struct records{
 } records;
 
 
+
 int passWordCheck(char password[], int n, char EnteredPassword[])
 {
 	int i;
@@ -59,7 +60,7 @@ void ManageStart(char password[], int n, char *result, records quiz[])
 					break;
 				case 'N':
 					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(result, password, quiz);
 					break;
 				default:
 					do{
@@ -68,16 +69,20 @@ void ManageStart(char password[], int n, char *result, records quiz[])
 						printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
 						scanf("%c", &choice);
 						scanf("%c", &choice);
-						if(choice == 'Y'){
-							pick = 0;
-							ManageStart(password, strlen(password), &*result, quiz);
+						switch(choice){
+							case 'Y':
+								pick = 0;
+								ManageStart(password, strlen(password), &*result, quiz);
+								break;
+							case 'N':
+								pick = 0;
+								*result = '\0';
+								interface(&*result, password, quiz);
+								break;
+							default:
+								pick = 1;
 						}
-						if (choice == 'N')
-						{
-							pick = 0;
-							*result = '\0';
-							interface(result, password, quiz);
-						}
+							
 					}while(pick != 0);
 					
 					break;
@@ -96,8 +101,30 @@ void Exit()
 
 
 
-void addRecord(){
-	printf("You are now adding a record");
+void addRecord(char *result, char password[], records quiz[], int n){
+	records check;
+	int i;
+	printf("Please input a question.\n");
+	fgets(check.question, 151, stdin);
+	fgets(check.question, 151, stdin);
+	printf("Please input the answer.\n");
+	fgets(check.answer, 31, stdin);
+	for(i = 0; i < n; i++){
+		if((strcmp(check.question, quiz[i].question) == 0) && (strcmp(check.answer, quiz[i].answer) == 0)){
+			printf("%s\n", quiz[i].topic);
+			printf("%s\n", quiz[i].question);
+			printf("%s\n", quiz[i].choice1);
+			printf("%s\n", quiz[i].choice2);
+			printf("%s\n", quiz[i].choice3);
+			printf("%s\n", quiz[i].answer);
+			printf("The given question and answer is already listed in the records");
+			system("cls");
+			printf("You will be redirected to the main menu");
+			*result = '\0';
+			interface(interface(&*result, password, quiz));
+		}
+	}
+	
 }
 
 void editRecord(){
@@ -112,13 +139,13 @@ void deleteRecord(){
 void recordManager(char *result, char password[], records quiz[]){
 	int choice1;
 	char choice2;
-	printf("Welcome to the manager data interface, which features would you like to use? (1 - Add, 2 - Edit, 3 - Delete) ");
+	printf("Welcome to the manager data interface, which features would you like to use? \n(1 - Add, 2 - Edit, 3 - Delete, 4 - Import Data, 5 - Export Data) ");
 	scanf("%d", &choice1);
 	switch(choice1)
 	{
 		case 1:
 			system("cls");
-			addRecord();
+			addRecord(&*result, password, quiz, 7);
 			break;
 		case 2:
 			system("cls");
@@ -127,6 +154,14 @@ void recordManager(char *result, char password[], records quiz[]){
 		case 3:
 			system("cls");
 			deleteRecord();
+			break;
+		case 4:
+			system("cls");
+			//ImportData();
+			break;
+		case 5:
+			system("cls");
+			//ExportData();
 			break;
 		default:
 			choice2 = '\0';
@@ -177,19 +212,7 @@ void PlayInterface(char *result, char password[], records quiz[])
 	
 }
 
-
-int main()
-{
-	char result;
-	char password[21] = "Lance";
-	records quiz[7];
-	
-	interface(&result, password, quiz);
-	
-	return 0;
-	
-}
-void interface(char *result, char password[], records quiz[])
+void interface(char *result, char password[],records quiz[])
 {
 
 	while(*result == '\0')
@@ -218,4 +241,16 @@ void interface(char *result, char password[], records quiz[])
 					break;	
 			}
 	}
+}
+
+int main()
+{
+	char result;
+	char password[21] = "Lance";
+	records quiz[7];
+	
+	interface(&result, password, quiz);
+	
+	return 0;
+	
 }
