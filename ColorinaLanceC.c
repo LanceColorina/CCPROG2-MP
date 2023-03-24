@@ -14,6 +14,8 @@ typedef struct records{
 } records;
 
 
+void interface(char *result, char password[],records quiz[]);
+void recordManager(char *result, char password[], records quiz[]);
 
 int passWordCheck(char password[], int n, char EnteredPassword[])
 {
@@ -99,30 +101,63 @@ void Exit()
 	printf("Thank you for playing");
 }
 
+int checkEmptyIndex(records quiz[]){
+	int i = 0;
+	do{
+		if(quiz[i].question[0] == '\0'){
+			return i;
+		}
+		i++;
+	}while(i != 8);
+	return i;
+}
 
-
-void addRecord(char *result, char password[], records quiz[], int n){
+void addRecord(char *result, char password[], records quiz[]){
 	records check;
 	int i;
+	int n = checkEmptyIndex(quiz);
+	char yes;
+	
+	if(n == 8){
+		printf("The records are already full, please remove a record to use this feature.\n");
+		printf("You will now be redirected to the records interface.\n");
+		recordManager(&*result, password, quiz);
+	}
+	
 	printf("Please input a question.\n");
-	fgets(check.question, 151, stdin);
+	scanf("%c", &yes);
 	fgets(check.question, 151, stdin);
 	printf("Please input the answer.\n");
 	fgets(check.answer, 31, stdin);
+
+	
+
 	for(i = 0; i < n; i++){
-		if((strcmp(check.question, quiz[i].question) == 0) && (strcmp(check.answer, quiz[i].answer) == 0)){
-			printf("%s\n", quiz[i].topic);
-			printf("%s\n", quiz[i].question);
-			printf("%s\n", quiz[i].choice1);
-			printf("%s\n", quiz[i].choice2);
-			printf("%s\n", quiz[i].choice3);
-			printf("%s\n", quiz[i].answer);
-			printf("The given question and answer is already listed in the records");
-			system("cls");
-			printf("You will be redirected to the main menu");
-			*result = '\0';
-			interface(interface(&*result, password, quiz));
+		if(strcmp(check.question, quiz[i].question) == 0 && strcmp(check.answer, quiz[i].answer) == 0){
+		printf("%s\n", quiz[i].topic);
+		printf("%s\n", quiz[i].question);
+		printf("%s\n", quiz[i].choice1);
+		printf("%s\n", quiz[i].choice2);
+		printf("%s\n", quiz[i].choice3);
+		printf("%s\n", quiz[i].answer);
+		printf("The input question and answer is already existing\n");
+		printf("You will now be redirected to the records interface.\n");
+		recordManager(&*result, password, quiz);
 		}
+	}	
+	
+	if(i == n){
+		printf("Please input a topic.\n");
+		fgets(check.topic, 21, stdin);
+		printf("Please input the first choice.\n");
+		fgets(check.choice1, 31, stdin);
+		printf("Please input the second choice.\n");
+		fgets(check.choice2, 31, stdin);
+		printf("Please input the third choice.\n");
+		fgets(check.choice3, 31, stdin);
+		quiz[i] = check;
+		printf("Record added success.\n");
+		recordManager(&*result, password, quiz);
 	}
 	
 }
@@ -145,7 +180,7 @@ void recordManager(char *result, char password[], records quiz[]){
 	{
 		case 1:
 			system("cls");
-			addRecord(&*result, password, quiz, 7);
+			addRecord(&*result, password, quiz);
 			break;
 		case 2:
 			system("cls");
@@ -165,18 +200,23 @@ void recordManager(char *result, char password[], records quiz[]){
 			break;
 		default:
 			choice2 = '\0';
-			printf("Choice of feature is not listed in the directory\n");
-			printf("Would you like to return to the interface or try again? (1 - try again, 2 - return interface) ");
-			scanf("%c", &choice2);
-			scanf("%c", &choice2);
-			if(choice2 == '2'){
-				*result = '\0';
-				interface(&*result, password, quiz);
-			}
-			if(choice2 == '1'){
-				recordManager(&*result, password, quiz);
-			}
-			
+			do{
+				printf("Choice of feature is not listed in the directory\n");
+				printf("Would you like to return to the interface or try again? (1 - try again, 2 - return interface) ");
+				scanf("%c", &choice2);
+				scanf("%c", &choice2);
+				switch(choice2){
+					case '1':
+						recordManager(&*result, password, quiz);
+						break;
+					case '2':
+						*result = '\0';
+						interface(&*result, password, quiz);
+						break;
+					default:
+						choice2 = '\0';			
+				}
+			}while(choice2 == '\0');
 			break;
 	}
 }
@@ -192,6 +232,11 @@ void PlayInterface(char *result, char password[], records quiz[])
 	switch(choice){
 		case '1':
 			system("cls");
+			if(checkEmptyIndex(quiz) == 0){
+				printf("Error in initiating the game. Please add a record before playing\n");
+				printf("You are now redirected to the play interface\n\n");
+				PlayInterface(&*result, password,quiz);
+			}
 			//playGame();
 			break;
 		case '2':
@@ -205,7 +250,7 @@ void PlayInterface(char *result, char password[], records quiz[])
 			break;
 		default:
 			system("cls");
-			printf("Choice input is not listed in the directory, Please try again\n");
+			printf("Choice input is not listed in the directory, Please try again\n\n");
 			PlayInterface(&*result, password,quiz);
 			break;
 	}
