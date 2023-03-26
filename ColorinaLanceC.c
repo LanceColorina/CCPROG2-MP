@@ -19,6 +19,10 @@ typedef struct scoreList{
 	int score;
 }scores;
 
+typedef struct topicsList{
+	char genre[21];
+	int amount;
+}topics;
 
 void interface(char *result, char password[],records quiz[]);
 void recordManager(char *result, char password[], records quiz[]);
@@ -107,7 +111,7 @@ void Exit()
 	printf("Thank you for playing");
 }
 
-int checkEmptyIndex(records quiz[]){
+int checkEmptyIndexQuiz(records quiz[]){
 	int i = 0;
 	do{
 		if(quiz[i].question[0] == '\0'){
@@ -121,7 +125,7 @@ int checkEmptyIndex(records quiz[]){
 void addRecord(char *result, char password[], records quiz[]){
 	records check;
 	int i;
-	int n = checkEmptyIndex(quiz);
+	int n = checkEmptyIndexQuiz(quiz);
 	char yes;
 	
 	if(n == 100){
@@ -232,6 +236,8 @@ void displayScore(char *result, char password[], records quiz[]){
 	int i = 0;
 	scores list[MAX_RECORDS];
 	fp = fopen("scores.txt", "r");
+	if(fp == NULL){
+	}
 	if(fp != NULL){
 	printf("Rankings:\n\n");
 	do{
@@ -254,6 +260,68 @@ void displayScore(char *result, char password[], records quiz[]){
 			break;
 	}
 }
+int checkExistingTopic(topics list[], char topic[21]){
+		int i;
+		for(i = 0; i < MAX_RECORDS;i++){
+			if(strcmp(list[i].genre, topic) == 0){
+				return 1;
+			}
+		}
+		return 0;
+}
+
+void checkTopics(topics list[],records quiz[]){
+	char check[21];
+	int i,j,count;
+	
+	for(i = 0; i < MAX_RECORDS;i++){
+		if(checkExistingTopic(list, quiz[i].topic) == 0){
+			strcpy(check, quiz[i].topic);
+			count = 0;
+				for(j = 0; j < MAX_RECORDS;i++){
+					if(strcmp(check, quiz[j].topic) == 0){
+						count++; 
+					}
+				}
+			strcpy(list[i].genre,check);
+			list[i].amount = count;
+		}
+	}
+}
+
+int checkEmptyIndexList(topics list[]){
+	int i = 0;
+	do{
+		if(list[i].genre[0] == '\0'){
+			return i;
+		}
+		i++;
+	}while(i != MAX_RECORDS);
+	return i;
+}
+
+void playGame(char *result, char password[], records quiz[]){
+	scores playerInfo;
+	int i = 0,j,scoreCount = 0;
+	char choice[8][21];
+	char answer[31];
+	topics list[MAX_RECORDS];
+	checkTopics(list, quiz);
+	printf("Please enter a name: ");
+	fgets(playerInfo.Name,51,stdin);
+	do{
+		printf("Please Choose a topic: \n");
+		for(j = 0; j < checkEmptyIndexList(list); j++){
+			printf("%s (%d)\n", list[j].genre, list[j].amount);	
+		}
+		fgets(&choice[i][0],21,stdin);
+		/*if(strcmp(answer, quiz[i].answer) == 0){
+		scoreCount++;
+		}*/
+		i++;
+	}while(i < 7);
+}
+
 void PlayInterface(char *result, char password[], records quiz[])
 {
 	char choice;
@@ -265,12 +333,12 @@ void PlayInterface(char *result, char password[], records quiz[])
 	switch(choice){
 		case '1':
 			system("cls");
-			if(checkEmptyIndex(quiz) == 0){
+			if(checkEmptyIndexQuiz(quiz) == 0){
 				printf("Error in initiating the game. Please add a record before playing\n");
 				printf("You are now redirected to the play interface\n\n");
 				PlayInterface(&*result, password,quiz);
 			}
-			//playGame();
+			playGame(&*result, password, quiz);
 			break;
 		case '2':
 			system("cls");
@@ -292,7 +360,6 @@ void PlayInterface(char *result, char password[], records quiz[])
 
 void interface(char *result, char password[],records quiz[])
 {
-
 	while(*result == '\0')
 	{
 		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
@@ -313,9 +380,9 @@ void interface(char *result, char password[],records quiz[])
 					Exit();
 					break;
 				default:
+					system("cls");
 					printf("The Character is not listed in the directory, Please enter a new Character.\n");
 					*result = '\0';
-					system("cls");
 					break;	
 			}
 	}
@@ -332,4 +399,3 @@ int main()
 	return 0;
 	
 }
-
