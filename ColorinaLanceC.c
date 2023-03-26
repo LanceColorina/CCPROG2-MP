@@ -2,7 +2,7 @@
 #include<string.h>
 #include<conio.h>
 #include<stdlib.h>
-
+#define MAX_RECORDS 100
 
 typedef struct records{
 	char topic[21];
@@ -12,6 +12,12 @@ typedef struct records{
 	char choice3[31];
 	char answer[31];
 } records;
+
+typedef struct scoreList{
+	int rowNum;
+	char Name[51];
+	int score;
+}scores;
 
 
 void interface(char *result, char password[],records quiz[]);
@@ -108,7 +114,7 @@ int checkEmptyIndex(records quiz[]){
 			return i;
 		}
 		i++;
-	}while(i != 8);
+	}while(i != 100);
 	return i;
 }
 
@@ -118,7 +124,7 @@ void addRecord(char *result, char password[], records quiz[]){
 	int n = checkEmptyIndex(quiz);
 	char yes;
 	
-	if(n == 8){
+	if(n == 100){
 		printf("The records are already full, please remove a record to use this feature.\n");
 		printf("You will now be redirected to the records interface.\n");
 		recordManager(&*result, password, quiz);
@@ -129,8 +135,6 @@ void addRecord(char *result, char password[], records quiz[]){
 	fgets(check.question, 151, stdin);
 	printf("Please input the answer.\n");
 	fgets(check.answer, 31, stdin);
-
-	
 
 	for(i = 0; i < n; i++){
 		if(strcmp(check.question, quiz[i].question) == 0 && strcmp(check.answer, quiz[i].answer) == 0){
@@ -156,7 +160,8 @@ void addRecord(char *result, char password[], records quiz[]){
 		printf("Please input the third choice.\n");
 		fgets(check.choice3, 31, stdin);
 		quiz[i] = check;
-		printf("Record added success.\n");
+		system("cls");
+		printf("Record added success.\n\n");
 		recordManager(&*result, password, quiz);
 	}
 	
@@ -221,6 +226,34 @@ void recordManager(char *result, char password[], records quiz[]){
 	}
 }
 
+void displayScore(char *result, char password[], records quiz[]){
+	FILE *fp;
+	char c;
+	int i = 0;
+	scores list[MAX_RECORDS];
+	fp = fopen("scores.txt", "r");
+	if(fp != NULL){
+	printf("Rankings:\n\n");
+	do{
+		fscanf(fp, "%d", &list[i].rowNum);
+		fscanf(fp, "%s", list[i].Name);
+		fscanf(fp, "%d\n", &list[i].score);
+		printf("%d %s %d\n", list[i].rowNum, list[i].Name, list[i].score);
+		i++;
+	}while(!feof(fp) == 1); 
+	}
+	fclose(fp);
+	printf("\nEnter any key to return to Main Hub ");
+	scanf("%c", &c);
+	scanf("%c", &c);
+	switch(c){
+		default:
+			system("cls");
+			*result = '\0';
+			interface(&*result, password, quiz);
+			break;
+	}
+}
 void PlayInterface(char *result, char password[], records quiz[])
 {
 	char choice;
@@ -241,7 +274,7 @@ void PlayInterface(char *result, char password[], records quiz[])
 			break;
 		case '2':
 			system("cls");
-			//scores();
+			displayScore(&*result, password, quiz);
 			break;
 		case '3':
 			system("cls");
@@ -292,10 +325,11 @@ int main()
 {
 	char result;
 	char password[21] = "Lance";
-	records quiz[7];
+	records quiz[MAX_RECORDS];
 	
 	interface(&result, password, quiz);
 	
 	return 0;
 	
 }
+
