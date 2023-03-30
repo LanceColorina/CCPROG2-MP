@@ -2,6 +2,8 @@
 #include<string.h>
 #include<conio.h>
 #include<stdlib.h>
+#include<time.h>
+
 #define MAX_RECORDS 100
 
 typedef struct records{
@@ -25,9 +27,23 @@ typedef struct topicsList{
 	int amount;
 }topics;
 
-int checkEmptyIndexList(topics list[]);
-void interface(char *result, char password[],records quiz[]);
+int passWordCheck(char password[], int n, char EnteredPassword[]);
+void ManageStart(char password[], int n, char *result, records quiz[]);
+void Exit();
+int checkEmptyIndexQuiz(records quiz[]);
+void addRecord(char *result, char password[], records quiz[]);
+void editRecord();
+void deleteRecord();
+void importData(char *result, char password[], records quiz[]);
+void ExportData(char *result, char password[], records quiz[]);
 void recordManager(char *result, char password[], records quiz[]);
+void displayScore(char *result, char password[], records quiz[]);
+int checkExistingTopic(topics list[], char topic[21]);
+int organizeTopics(topics list[],records quiz[]);
+int checkEmptyIndexList(topics list[]);
+void playGame(char *result, char password[], records quiz[]);
+void PlayInterface(char *result, char password[], records quiz[]);
+void interface(char *result, char password[],records quiz[]);
 
 int passWordCheck(char password[], int n, char EnteredPassword[])
 {
@@ -83,7 +99,8 @@ void ManageStart(char password[], int n, char *result, records quiz[])
 						printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
 						scanf("%c", &choice);
 						scanf("%c", &choice);
-						switch(choice){
+						switch(choice)
+						{
 							case 'Y':
 								pick = 0;
 								ManageStart(password, strlen(password), &*result, quiz);
@@ -113,10 +130,12 @@ void Exit()
 	printf("Thank you for playing");
 }
 
-int checkEmptyIndexQuiz(records quiz[]){
+int checkEmptyIndexQuiz(records quiz[])
+{
 	int i = 0;
 	do{
-		if(quiz[i].question[0] == '\0'){
+		if(quiz[i].question[0] == '\0')
+		{
 			return i;
 		}
 		i++;
@@ -124,13 +143,15 @@ int checkEmptyIndexQuiz(records quiz[]){
 	return i;
 }
 
-void addRecord(char *result, char password[], records quiz[]){
+void addRecord(char *result, char password[], records quiz[])
+{
 	records check;
 	int i;
 	int n = checkEmptyIndexQuiz(quiz);
 	char yes,c;
 	
-	if(n == 100){
+	if(n == 100)
+	{
 		printf("The records are already full, please remove a record to use this feature.\n");
 		printf("You will now be redirected to the records interface.\n");
 		recordManager(&*result, password, quiz);
@@ -143,8 +164,10 @@ void addRecord(char *result, char password[], records quiz[]){
 	printf("Please input the answer.\n");
 	fgets(check.answer, 31, stdin);
 	check.answer[strcspn(check.answer,"\n")] = '\0';
-	for(i = 0; i < n; i++){
-		if(strcmp(check.question, quiz[i].question) == 0 && strcmp(check.answer, quiz[i].answer) == 0){
+	for(i = 0; i < n; i++)
+	{
+		if(strcmp(check.question, quiz[i].question) == 0 && strcmp(check.answer, quiz[i].answer) == 0)
+		{
 		printf("%s\n", quiz[i].topic);
 		printf("%d\n", quiz[i].number);
 		printf("%s\n", quiz[i].question);
@@ -158,13 +181,15 @@ void addRecord(char *result, char password[], records quiz[]){
 		}
 	}	
 	
-	if(i == n){
+	if(i == n)
+	{
 		printf("Please input a topic.\n");
 		fgets(check.topic, 21, stdin);
 		check.topic[strcspn(check.topic,"\n")] = '\0';
-		printf("Please input the question number.\n");
+		/*printf("Please input the question number.\n");
 		scanf("%d", &check.number);
-		scanf("%c", &c);
+		scanf("%c", &c);*/
+		check.number = quiz[checkEmptyIndexQuiz(quiz) - 1].number;
 		printf("Please input the first choice.\n");
 		fgets(check.choice1, 31, stdin);
 		check.choice1[strcspn(check.choice1,"\n")] = '\0';
@@ -183,15 +208,18 @@ void addRecord(char *result, char password[], records quiz[]){
 	
 }
 
-void editRecord(){
-	printf("You are now editing a record");
+void editRecord(char *result, char password[], records quiz[])
+{
+	
 }
 
-void deleteRecord(){
+void deleteRecord()
+{
 	printf("You are now deleting a record");
 }
 
-void importData(char *result, char password[], records quiz[]){
+void importData(char *result, char password[], records quiz[])
+{
 	FILE *fp;
 	char filename[51];
 	char c;
@@ -201,23 +229,28 @@ void importData(char *result, char password[], records quiz[]){
 	fgets(filename, 51, stdin);
 	filename[strcspn(filename,"\n")] = '\0';
 	fp = fopen(filename, "r");
-	if(fp == NULL){
+	if(fp == NULL)
+	{
 		printf("The file cannot be found, would you like to go back or try again? (1 - go back, 2 - try again)");
 		scanf("%d", &choice);
-		if(choice == 1){
+		if(choice == 1)
+		{
 			*result = '\0';
 			interface(&*result, password, quiz);
 		}
-		if(choice == 2){
+		if(choice == 2)
+		{
 			importData(&*result, password, quiz);
 		}
-		if(choice != 1 || choice != 2){
+		if(choice != 1 || choice != 2)
+		{
 			printf("chosen number is not registered as a choice, type any key to return to main interface...");
 			*result = '\0';
 			interface(&*result, password, quiz);
 		}
 	}
-	if(fp != NULL){
+	if(fp != NULL)
+	{
 		do{
 			fscanf(fp, "%s\n", quiz[i].topic);
 			fscanf(fp, "%d\n", &quiz[i].number);
@@ -235,7 +268,8 @@ void importData(char *result, char password[], records quiz[]){
 	}
 }
 
-void ExportData(char *result, char password[], records quiz[]){
+void ExportData(char *result, char password[], records quiz[])
+{
 	FILE *fp;
 	int i = 0;
 	char filename[31];
@@ -261,7 +295,8 @@ void ExportData(char *result, char password[], records quiz[]){
 	interface(&*result, password, quiz);
 	
 }
-void recordManager(char *result, char password[], records quiz[]){
+void recordManager(char *result, char password[], records quiz[])
+{
 	int choice1;
 	char choice2;
 	printf("Welcome to the manager data interface, which features would you like to use? \n(1 - Add, 2 - Edit, 3 - Delete, 4 - Import Data, 5 - Export Data) ");
@@ -274,7 +309,7 @@ void recordManager(char *result, char password[], records quiz[]){
 			break;
 		case 2:
 			system("cls");
-			editRecord();
+			editRecord(&*result, password, quiz);
 			break;
 		case 3:
 			system("cls");
@@ -295,7 +330,8 @@ void recordManager(char *result, char password[], records quiz[]){
 				printf("Would you like to return to the interface or try again? (1 - try again, 2 - return interface) ");
 				scanf("%c", &choice2);
 				scanf("%c", &choice2);
-				switch(choice2){
+				switch(choice2)
+				{
 					case '1':
 						recordManager(&*result, password, quiz);
 						break;
@@ -311,15 +347,15 @@ void recordManager(char *result, char password[], records quiz[]){
 	}
 }
 
-void displayScore(char *result, char password[], records quiz[]){
+void displayScore(char *result, char password[], records quiz[])
+{
 	FILE *fp;
 	char c;
 	int i = 0;
 	scores list[MAX_RECORDS];
 	fp = fopen("scores.txt", "r");
-	if(fp == NULL){
-	}
-	if(fp != NULL){
+	if(fp != NULL)
+	{
 	printf("Rankings:\n\n");
 	do{
 		fscanf(fp, "%d", &list[i].rowNum);
@@ -333,7 +369,8 @@ void displayScore(char *result, char password[], records quiz[]){
 	printf("\nEnter any key to return to Main Hub ");
 	scanf("%c", &c);
 	scanf("%c", &c);
-	switch(c){
+	switch(c)
+	{
 		default:
 			system("cls");
 			*result = '\0';
@@ -341,39 +378,55 @@ void displayScore(char *result, char password[], records quiz[]){
 			break;
 	}
 }
-int checkExistingTopic(topics list[], char topic[21]){
+
+int checkExistingTopic(topics list[], char topic[21])
+{
 		int i;
-		for(i = 0; i < MAX_RECORDS;i++){
-			if(strcmp(list[i].genre, topic) == 0){
+		for(i = 0; i < MAX_RECORDS;i++)
+		{
+			if(strcmp(list[i].genre, topic) == 0)
+			{
 				return 1;
 			}
 		}
 		return 0;
 }
  
-void organizeTopics(topics list[],records quiz[]){
+int organizeTopics(topics list[],records quiz[])
+{
 	char check[21];
-	int i,j,count;
-	
-	for(i = 0; i < MAX_RECORDS;i++){
+	int i,j,k,count,index = 0;
+	for(k = 0; k < MAX_RECORDS; k++)
+	{
+		list[k].genre[0] = '\0';	
+	}
+	for(i = 0; i < checkEmptyIndexQuiz(quiz);i++)
+	{
 		count = 0;
-		if(checkExistingTopic(list, quiz[i].topic) == 0){
+		if(checkExistingTopic(list, quiz[i].topic) == 0)
+		{
 				strcpy(check, quiz[i].topic);
-				for(j = 0; j < MAX_RECORDS;i++){
-					if(strcmp(check, quiz[j].topic) == 0){
+				for(j = 0; j < MAX_RECORDS;j++)
+				{
+					if(strcmp(check, quiz[j].topic) == 0)
+					{
 						count++; 
 					}
 				}
 			list[checkEmptyIndexList(list)].amount = count;
 			strcpy(list[checkEmptyIndexList(list)].genre,quiz[i].topic);
+			index++;
 		}
 	}
+	return index;
 }
 
-int checkEmptyIndexList(topics list[]){
+int checkEmptyIndexList(topics list[])
+{
 	int i = 0;
 	do{
-		if(list[i].genre[0] == '\0'){
+		if(list[i].genre[0] == '\0')
+		{
 			return i;
 		}
 		i++;
@@ -381,27 +434,94 @@ int checkEmptyIndexList(topics list[]){
 	return i;
 }
 
-void playGame(char *result, char password[], records quiz[]){
+void playGame(char *result, char password[], records quiz[])
+{
 	scores playerInfo;
-	int i = 0,j,scoreCount = 0;
-	char choice[8][21];
-	char answer[31];
-	char c;
-	topics list[MAX_RECORDS];
-	organizeTopics(list, quiz);
+	int exist; // checks if the input topic is listed
+	int i = 0,j = 0,k,l,m; // int variables for looping
+	int scoreCount = 0; // counter for the player's score
+	int randomNumber, index; // randomNumber - holder for a random number when choosing questions, index - index of the topic in struct topics
+	srand(time(0));
+	char choice[21]; // holder for topic choice
+	char answer[31];// holder for player answer choice
+	char c; 
+	topics list[MAX_RECORDS]; // array struct for topics available and amount for each topic
+	int n = organizeTopics(list, quiz);
+	int randomQuestionNumber[checkEmptyIndexList(list)][100]; //2d array for checking if the given topic with question number is already used
 	printf("Please enter a name: ");
 	scanf("%c", &c);
 	fgets(playerInfo.Name,51,stdin);
+	playerInfo.Name[strcspn(playerInfo.Name, "\n")] = '\0';
 	do{
 		printf("Please Choose a topic: \n");
-		for(j = 0; j < checkEmptyIndexList(list); j++){
+		j = 0;
+		do{
 			printf("%s (%d)\n", list[j].genre, list[j].amount);	
+			j++;
+		}while(j < n);
+		fgets(choice,21,stdin);
+		choice[strcspn(choice,"\n")] = '\0';
+		exist = 1;
+		for(k = 0; k < n; k++)
+		{
+			if(strcmp(choice, list[k].genre) == 0)
+			{
+				if(list[k].amount == 0)
+				{
+					system("cls");
+					printf("All questions for this topic is aready used, please try another\n");
+				}
+				else
+					exist = 0;
+					list[k].amount--;
+					randomNumber = (rand() % list[k].amount);
+					index = k;
+					system("cls");
+			}	
 		}
-		fgets(&choice[i][0],21,stdin);
-		if(strcmp(answer, quiz[i].answer) == 0){
-		scoreCount++;
+		if(exist == 1)
+		{
+			system("cls");
+			printf("topic chosen is not listed here try again\n");
 		}
-		i++;
+		
+		if(exist == 0)
+		{ 
+			for(l = i - 1; l > 0; l--)
+			{
+				if(randomQuestionNumber[index][l] != randomNumber)
+				{
+					randomQuestionNumber[index][i] = randomNumber;
+				}
+				else
+					randomQuestionNumber[index][i] = 0;
+			}
+			for(m = 0; m < checkEmptyIndexQuiz(quiz);m++)
+			{
+				if(strcmp(quiz[m].topic, choice) == 0)
+				{
+					if(quiz[m].number == randomNumber)
+					{
+						printf("%s\t\t\t\t your score is %d\n", quiz[i].topic, scoreCount);
+						printf("%d\n", quiz[m].number);
+						printf("%s\n", quiz[m].question);
+						printf("%s\n", quiz[m].choice1);
+						printf("%s\n", quiz[m].choice2);
+						printf("%s\n", quiz[m].choice3);
+						fgets(answer, 31,stdin);
+						answer[strcspn(answer,"\n")] = '\0';	
+						if(strcmp(answer, quiz[m].answer) == 0)
+							{
+								scoreCount++;
+							}	
+					}
+				}
+			} 
+		}
+		if(list[k].amount != 0 && exist == 0)
+		{
+			i++;
+		}
 	}while(i < 7);
 }
 
@@ -413,10 +533,12 @@ void PlayInterface(char *result, char password[], records quiz[])
 	scanf("%c", &choice);
 	scanf("%c", &choice);
 	
-	switch(choice){
+	switch(choice)
+	{
 		case '1':
 			system("cls");
-			if(checkEmptyIndexQuiz(quiz) == 0){
+			if(checkEmptyIndexQuiz(quiz) == 0)
+			{
 				printf("Error in initiating the game. Please add a record before playing\n");
 				printf("You are now redirected to the play interface\n\n");
 				PlayInterface(&*result, password,quiz);
