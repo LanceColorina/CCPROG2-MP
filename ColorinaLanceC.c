@@ -28,22 +28,22 @@ typedef struct topicsList{
 }topics;
 
 int passWordCheck(char password[], int n, char EnteredPassword[]);
-void ManageStart(char password[], int n, char *result, records quiz[]);
+void ManageStart(char password[], int n,records quiz[]);
 void Exit();
 int checkEmptyIndexQuiz(records quiz[]);
-void addRecord(char *result, char password[], records quiz[]);
-void editRecord(char *result, char password[], records quiz[]);
+void addRecord(char password[], records quiz[]);
+void editRecord(char password[], records quiz[]);
 void deleteRecord();
-void importData(char *result, char password[], records quiz[]);
-void ExportData(char *result, char password[], records quiz[]);
-void recordManager(char *result, char password[], records quiz[]);
-void displayScore(char *result, char password[], records quiz[]);
+void importData(char password[], records quiz[]);
+void ExportData(char password[], records quiz[]);
+void recordManager(char password[], records quiz[]);
+void displayScore(char password[], records quiz[]);
 int checkExistingTopic(topics list[], char topic[21]);
 int organizeTopics(topics list[],records quiz[]);
 int checkEmptyIndexList(topics list[]);
-void playGame(char *result, char password[], records quiz[]);
-void PlayInterface(char *result, char password[], records quiz[]);
-void interface(char *result, char password[],records quiz[]);
+void playGame(char password[], records quiz[]);
+void PlayInterface(char password[], records quiz[]);
+void interface(char password[],records quiz[]);
 
 int passWordCheck(char password[], int n, char EnteredPassword[])
 {
@@ -58,7 +58,7 @@ int passWordCheck(char password[], int n, char EnteredPassword[])
 	return 0;
 }
 
-void ManageStart(char password[], int n, char *result, records quiz[])
+void ManageStart(char password[], int n,records quiz[])
 {
 	int i,pick;
 	char choice;
@@ -89,8 +89,7 @@ void ManageStart(char password[], int n, char *result, records quiz[])
 					passWordCheck(password, n, EnteredPassword);
 					break;
 				case 'N':
-					*result = '\0';
-					interface(result, password, quiz);
+					interface(password, quiz);
 					break;
 				default:
 					do{
@@ -103,12 +102,11 @@ void ManageStart(char password[], int n, char *result, records quiz[])
 						{
 							case 'Y':
 								pick = 0;
-								ManageStart(password, strlen(password), &*result, quiz);
+								ManageStart(password, strlen(password), quiz);
 								break;
 							case 'N':
 								pick = 0;
-								*result = '\0';
-								interface(&*result, password, quiz);
+								interface(password, quiz);
 								break;
 							default:
 								pick = 1;
@@ -160,7 +158,7 @@ int checkTopicIndex(records check, records quiz[])
 	else
 		return temp;
 }
-void addRecord(char *result, char password[], records quiz[])
+void addRecord(char password[], records quiz[])
 {
 	records check;
 	int i;
@@ -171,7 +169,7 @@ void addRecord(char *result, char password[], records quiz[])
 	{
 		printf("The records are already full, please remove a record to use this feature.\n");
 		printf("You will now be redirected to the records interface.\n");
-		recordManager(&*result, password, quiz);
+		recordManager(password, quiz);
 	}
 	
 	printf("Please input a question.\n");
@@ -194,7 +192,7 @@ void addRecord(char *result, char password[], records quiz[])
 		printf("%s\n", quiz[i].answer);
 		printf("The input question and answer is already existing\n");
 		printf("You will now be redirected to the records interface.\n");
-		recordManager(&*result, password, quiz);
+		recordManager(password, quiz);
 		}
 	}	
 	
@@ -221,8 +219,7 @@ void addRecord(char *result, char password[], records quiz[])
 		quiz[i] = check;
 		system("cls");
 		printf("Record added success.\n\n");
-		*result = '\0';
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 	
 }
@@ -263,7 +260,7 @@ int topicIndex(char choice[], topics list[])
 	
 	return i;
 }
-void editRecord(char *result, char password[], records quiz[])
+void editRecord(char password[], records quiz[])
 {
 	int i,j,k; //looping variables
 	int number,edit; // number - chosen question number, edit - holds a choice of what to edit
@@ -285,8 +282,7 @@ void editRecord(char *result, char password[], records quiz[])
 	if(checkForExistingTopic(choice, list) == 1)
 	{
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
-		*result = '\0';
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 	printf("Choose a question to edit\n");
 	for(j = 0; j < checkEmptyIndexQuiz(quiz); j++)
@@ -301,7 +297,7 @@ void editRecord(char *result, char password[], records quiz[])
 	if(number > list[topicIndex(choice, list)].amount)
 	{
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 	
 	system("cls");
@@ -337,8 +333,7 @@ void editRecord(char *result, char password[], records quiz[])
 							adjustQuestionNumber(topicTemp,quiz, questionNumber);
 								
 					printf("Topic for this question has been succesfully edited. Returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;
 				case 2:
 					printf("Enter the new question: ");
@@ -346,8 +341,7 @@ void editRecord(char *result, char password[], records quiz[])
 					temp.question[strcspn(temp.question,"\n")] = '\0';
 					strcpy(quiz[k].question, temp.question);
 					printf("Question has been succesfully edited. Returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;
 				case 3:
 					printf("Enter the new choice: ");
@@ -355,8 +349,7 @@ void editRecord(char *result, char password[], records quiz[])
 					temp.choice1[strcspn(temp.choice1,"\n")] = '\0';
 					strcpy(quiz[k].choice1, temp.choice1);
 					printf("Choice 1 for this question has been succesfully edited. Returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;
 				case 4:
 					printf("Enter the new choice: ");
@@ -364,8 +357,7 @@ void editRecord(char *result, char password[], records quiz[])
 					temp.choice2[strcspn(temp.choice2,"\n")] = '\0';
 					strcpy(quiz[k].choice2, temp.choice2);
 					printf("Choice 2 for this question has been succesfully edited. Returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;
 				case 5:
 					printf("Enter the new choice: ");
@@ -373,8 +365,7 @@ void editRecord(char *result, char password[], records quiz[])
 					temp.choice3[strcspn(temp.choice3,"\n")] = '\0';
 					strcpy(quiz[k].choice3, temp.choice3);
 					printf("Choice 3 for this question has been succesfully edited. Returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;
 				case 6:
 					printf("Enter the new answer: ");
@@ -382,20 +373,18 @@ void editRecord(char *result, char password[], records quiz[])
 					temp.answer[strcspn(temp.answer,"\n")] = '\0';
 					strcpy(quiz[k].answer, temp.answer);
 					printf("Choice 1 for this question has been succesfully edited. Returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;
 				default:
 					printf("ERROR!!!\nchoice is not listed in the directory, returning to main hub...\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 			}
 		}
 	}
 	
 }
 
-void deleteRecord(char *result, char password[], records quiz[])
+void deleteRecord(char password[], records quiz[])
 {
 	int i,j,k,l,m; //looping variables
 	int number,del; // number - chosen question number, del - holds a choice of what to del
@@ -417,8 +406,7 @@ void deleteRecord(char *result, char password[], records quiz[])
 	if(checkForExistingTopic(choice, list) == 1)
 	{
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
-		*result = '\0';
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 	printf("Choose a question to Delete\n");
 	for(j = 0; j < checkEmptyIndexQuiz(quiz); j++)
@@ -433,8 +421,7 @@ void deleteRecord(char *result, char password[], records quiz[])
 	if(number > list[topicIndex(choice, list)].amount)
 	{
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
-		*result = '\0';
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
 	{
@@ -457,11 +444,11 @@ void deleteRecord(char *result, char password[], records quiz[])
 	}
 	
 	printf("Records chosen has been succesfully deleted. Returning to main hub...\n");
-	interface(&*result, password, quiz);
+	interface(password, quiz);
 }
 
 
-void importData(char *result, char password[], records quiz[])
+void importData(char password[], records quiz[])
 {
 	FILE *fp;
 	char filename[51];
@@ -478,18 +465,16 @@ void importData(char *result, char password[], records quiz[])
 		scanf("%d", &choice);
 		if(choice == 1)
 		{
-			*result = '\0';
-			interface(&*result, password, quiz);
+			interface(password, quiz);
 		}
 		if(choice == 2)
 		{
-			importData(&*result, password, quiz);
+			importData(password, quiz);
 		}
 		if(choice != 1 || choice != 2)
 		{
 			printf("chosen number is not registered as a choice, type any key to return to main interface...");
-			*result = '\0';
-			interface(&*result, password, quiz);
+			interface(password, quiz);
 		}
 	}
 	if(fp != NULL)
@@ -506,12 +491,11 @@ void importData(char *result, char password[], records quiz[])
 			i++;
 		}while(!feof(fp) == 1);
 		printf("import succesful, returning to main interface...\n");
-		*result = '\0';
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 }
 
-void ExportData(char *result, char password[], records quiz[])
+void ExportData(char password[], records quiz[])
 {
 	FILE *fp;
 	int i = 0;
@@ -534,11 +518,10 @@ void ExportData(char *result, char password[], records quiz[])
 	}while(quiz[i].question[0] != '\0');
 	fclose(fp);
 	printf("file has been exported, returning to main hub.....\n\n");
-	*result = '\0';
-	interface(&*result, password, quiz);
+	interface(password, quiz);
 	
 }
-void recordManager(char *result, char password[], records quiz[])
+void recordManager(char password[], records quiz[])
 {
 	int choice1;
 	char choice2;
@@ -548,38 +531,38 @@ void recordManager(char *result, char password[], records quiz[])
 	{
 		case 1:
 			system("cls");
-			addRecord(&*result, password, quiz);
+			addRecord(password, quiz);
 			break;
 		case 2:
 			system("cls");
 			if(checkEmptyIndexQuiz(quiz) == 0)
 			{
 				printf("There are no existing records to edit, please try again\n");
-				recordManager(&*result, password, quiz);
+				recordManager(password, quiz);
 			}
-			editRecord(&*result, password, quiz);
+			editRecord(password, quiz);
 			break;
 		case 3:
 			system("cls");
 			if(checkEmptyIndexQuiz(quiz) == 0)
 			{
 				printf("There are no existing records to delete, please try again\n");
-				recordManager(&*result, password, quiz);
+				recordManager(password, quiz);
 			}
-			deleteRecord(&*result, password, quiz);
+			deleteRecord(password, quiz);
 			break;
 		case 4:
 			system("cls");
-			importData(&*result, password, quiz);
+			importData(password, quiz);
 			break;
 		case 5:
 			system("cls");
 			if(checkEmptyIndexQuiz(quiz) == 0)
 			{
 				printf("There are no existing records to Export, please try again\n");
-				recordManager(&*result, password, quiz);
+				recordManager(password, quiz);
 			}
-			ExportData(&*result, password, quiz);
+			ExportData(password, quiz);
 			break;
 		default:
 			choice2 = '\0';
@@ -591,11 +574,10 @@ void recordManager(char *result, char password[], records quiz[])
 				switch(choice2)
 				{
 					case '1':
-						recordManager(&*result, password, quiz);
+						recordManager(password, quiz);
 						break;
 					case '2':
-						*result = '\0';
-						interface(&*result, password, quiz);
+						interface(password, quiz);
 						break;
 					default:
 						choice2 = '\0';			
@@ -605,7 +587,7 @@ void recordManager(char *result, char password[], records quiz[])
 	}
 }
 
-void displayScore(char *result, char password[], records quiz[])
+void displayScore(char password[], records quiz[])
 {
 	FILE *fp;
 	char c;
@@ -631,8 +613,7 @@ void displayScore(char *result, char password[], records quiz[])
 	{
 		default:
 			system("cls");
-			*result = '\0';
-			interface(&*result, password, quiz);
+			interface(password, quiz);
 			break;
 	}
 }
@@ -692,7 +673,7 @@ int checkEmptyIndexList(topics list[])
 	return i;
 }
 
-void playGame(char *result, char password[], records quiz[])
+void playGame(char password[], records quiz[])
 {
 	scores playerInfo;
 	int exist; // checks if the input topic is listed
@@ -784,15 +765,15 @@ void playGame(char *result, char password[], records quiz[])
 	if(scoreCount > 3){
 		printf("Congratulations, you have passed CCPROG2\n");
 		printf("Returning you to the main hub...\n");
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 	}
 	else 
 		printf("we are sorry to inform you that you have not passed CCPROG2");
 		printf("Returning you to the main hub...\n");
-		interface(&*result, password, quiz);
+		interface(password, quiz);
 }
 
-void PlayInterface(char *result, char password[], records quiz[])
+void PlayInterface(char password[], records quiz[])
 {
 	char choice;
 	printf("Welcome to the main hub of ""Who doesn't want to fail CCPROG2""\n");
@@ -808,42 +789,43 @@ void PlayInterface(char *result, char password[], records quiz[])
 			{
 				printf("Error in initiating the game. Please add a record before playing\n");
 				printf("You are now redirected to the play interface\n\n");
-				PlayInterface(&*result, password,quiz);
+				PlayInterface(password,quiz);
 			}
-			playGame(&*result, password, quiz);
+			playGame(password, quiz);
 			break;
 		case '2':
 			system("cls");
-			displayScore(&*result, password, quiz);
+			displayScore(password, quiz);
 			break;
 		case '3':
 			system("cls");
-			*result = '\0';
-			interface(&*result, password, quiz);
+
+			interface(password, quiz);
 			break;
 		default:
 			system("cls");
 			printf("Choice input is not listed in the directory, Please try again\n\n");
-			PlayInterface(&*result, password,quiz);
+			PlayInterface(password,quiz);
 			break;
 	}
 	
 }
 
-void interface(char *result, char password[],records quiz[])
+void interface(char password[],records quiz[])
 {
+	char result;
 		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
-		scanf("%c", &*result);
-			switch(*result)
+		scanf("%c", &result);
+			switch(result)
 			{
 				case '1':
 					system("cls");
-					ManageStart(password, strlen(password), &*result, quiz);
-					recordManager(&*result, password, quiz);
+					ManageStart(password, strlen(password), quiz);
+					recordManager(password, quiz);
 				 	break;
 				case '2':
 					system("cls");
-					PlayInterface(&*result, password,quiz);
+					PlayInterface(password,quiz);
 					break;
 				case '3':
 					system("cls");
@@ -851,19 +833,17 @@ void interface(char *result, char password[],records quiz[])
 					break;
 				default:
 					system("cls");
-					printf("The Character is not listed in the directory, Please enter a new Character.\n");
-					*result = '\0';
-					interface(&*result, password, quiz);
+					interface(password, quiz);
 					break;	
 			}
 }
 
 int main()
 {
-	char result;
+
 	char password[21] = "Lance";
 	records quiz[MAX_RECORDS];
-	interface(&result, password, quiz);
+	interface(password, quiz);
 	
 	return 0;
 	
