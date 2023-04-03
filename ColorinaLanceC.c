@@ -128,6 +128,7 @@ void Exit()
 {
 	printf("You are now exiting the program\n");
 	printf("Thank you for playing");
+	exit(0);
 }
 
 int checkEmptyIndexQuiz(records quiz[])
@@ -142,6 +143,7 @@ int checkEmptyIndexQuiz(records quiz[])
 	}while(i != 100);
 	return i;
 }
+
 int checkTopicIndex(records check, records quiz[])
 {
 	int i, temp = -1;
@@ -248,6 +250,19 @@ void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber)
 		}
 	}
 }
+int topicIndex(char choice[], topics list[])
+{
+	int index,i;
+	for(i = 0; i < MAX_RECORDS;i++)
+	{
+		if(strcmp(list[i].genre,choice) == 0)
+		{
+			return i;
+		}
+	}
+	
+	return i;
+}
 void editRecord(char *result, char password[], records quiz[])
 {
 	int i,j,k; //looping variables
@@ -283,6 +298,11 @@ void editRecord(char *result, char password[], records quiz[])
 		}
 	}
 	scanf("%d", &number);
+	if(number > list[topicIndex(choice, list)].amount)
+	{
+		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
+		interface(&*result, password, quiz);
+	}
 	
 	system("cls");
 	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
@@ -375,9 +395,9 @@ void editRecord(char *result, char password[], records quiz[])
 	
 }
 
-void deleteRecord()
+void deleteRecord(char *result, char password[], records quiz[])
 {
-	int i,j,k; //looping variables
+	int i,j,k,l,m; //looping variables
 	int number,del; // number - chosen question number, del - holds a choice of what to del
 	char c;
 	records temp; // temporary holder for things to edit
@@ -386,7 +406,7 @@ void deleteRecord()
 	topics list[MAX_RECORDS];
 	char choice[21]; // choice of topic user would like to edit
 	int n = organizeTopics(list, quiz);
-	printf("Choose a topic you would like to edit here\n");
+	printf("Choose a topic you would like to Delete here\n");
 	for(i = 0; i < checkEmptyIndexList(list); i++)
 	{
 		printf("%s\n",list[i].genre); 
@@ -410,7 +430,34 @@ void deleteRecord()
 		}
 	}
 	scanf("%d", &number);
+	if(number > list[topicIndex(choice, list)].amount)
+	{
+		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
+		*result = '\0';
+		interface(&*result, password, quiz);
+	}
+	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
+	{
+		if((strcmp(choice, quiz[k].topic) == 0) && (number == quiz[k].number))
+		{
+			del = k;
+		}
+	}
+	for(l = del; l < checkEmptyIndexQuiz(quiz); l++)
+	{
+		quiz[l] = quiz[l + 1]; 
+	}
 	
+	for(m = 0; m < checkEmptyIndexQuiz(quiz); m++)
+	{
+		if(strcmp(choice, quiz[m].topic) == 0 && number < quiz[m].number)
+		{
+			quiz[m].number = quiz[m].number - 1;
+		}
+	}
+	
+	printf("Records chosen has been succesfully deleted. Returning to main hub...\n");
+	interface(&*result, password, quiz);
 }
 
 
@@ -505,11 +552,21 @@ void recordManager(char *result, char password[], records quiz[])
 			break;
 		case 2:
 			system("cls");
+			if(checkEmptyIndexQuiz(quiz) == 0)
+			{
+				printf("There are no existing records to edit, please try again\n");
+				recordManager(&*result, password, quiz);
+			}
 			editRecord(&*result, password, quiz);
 			break;
 		case 3:
 			system("cls");
-			deleteRecord();
+			if(checkEmptyIndexQuiz(quiz) == 0)
+			{
+				printf("There are no existing records to delete, please try again\n");
+				recordManager(&*result, password, quiz);
+			}
+			deleteRecord(&*result, password, quiz);
 			break;
 		case 4:
 			system("cls");
@@ -517,6 +574,11 @@ void recordManager(char *result, char password[], records quiz[])
 			break;
 		case 5:
 			system("cls");
+			if(checkEmptyIndexQuiz(quiz) == 0)
+			{
+				printf("There are no existing records to Export, please try again\n");
+				recordManager(&*result, password, quiz);
+			}
 			ExportData(&*result, password, quiz);
 			break;
 		default:
@@ -801,7 +863,6 @@ int main()
 	char result;
 	char password[21] = "Lance";
 	records quiz[MAX_RECORDS];
-	
 	interface(&result, password, quiz);
 	
 	return 0;
