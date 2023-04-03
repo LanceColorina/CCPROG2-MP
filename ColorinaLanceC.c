@@ -281,6 +281,7 @@ void editRecord(char password[], records quiz[])
 	choice[strcspn(choice, "\n")] = '\0';
 	if(checkForExistingTopic(choice, list) == 1)
 	{
+		system("cls");
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
 		interface(password, quiz);
 	}
@@ -296,6 +297,7 @@ void editRecord(char password[], records quiz[])
 	scanf("%d", &number);
 	if(number > list[topicIndex(choice, list)].amount)
 	{
+		system("cls");
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
 		interface(password, quiz);
 	}
@@ -331,7 +333,7 @@ void editRecord(char password[], records quiz[])
 						else 
 							quiz[k].number = quiz[checkTopicIndex(temp, quiz)].number + 1;
 							adjustQuestionNumber(topicTemp,quiz, questionNumber);
-								
+					system("cls");			
 					printf("Topic for this question has been succesfully edited. Returning to main hub...\n");
 					interface(password, quiz);
 					break;
@@ -340,6 +342,7 @@ void editRecord(char password[], records quiz[])
 					fgets(temp.question, 151,stdin);
 					temp.question[strcspn(temp.question,"\n")] = '\0';
 					strcpy(quiz[k].question, temp.question);
+					system("cls");
 					printf("Question has been succesfully edited. Returning to main hub...\n");
 					interface(password, quiz);
 					break;
@@ -348,6 +351,7 @@ void editRecord(char password[], records quiz[])
 					fgets(temp.choice1, 21,stdin);
 					temp.choice1[strcspn(temp.choice1,"\n")] = '\0';
 					strcpy(quiz[k].choice1, temp.choice1);
+					system("cls");
 					printf("Choice 1 for this question has been succesfully edited. Returning to main hub...\n");
 					interface(password, quiz);
 					break;
@@ -356,6 +360,7 @@ void editRecord(char password[], records quiz[])
 					fgets(temp.choice2, 21,stdin);
 					temp.choice2[strcspn(temp.choice2,"\n")] = '\0';
 					strcpy(quiz[k].choice2, temp.choice2);
+					system("cls");
 					printf("Choice 2 for this question has been succesfully edited. Returning to main hub...\n");
 					interface(password, quiz);
 					break;
@@ -364,6 +369,7 @@ void editRecord(char password[], records quiz[])
 					fgets(temp.choice3, 21,stdin);
 					temp.choice3[strcspn(temp.choice3,"\n")] = '\0';
 					strcpy(quiz[k].choice3, temp.choice3);
+					system("cls");
 					printf("Choice 3 for this question has been succesfully edited. Returning to main hub...\n");
 					interface(password, quiz);
 					break;
@@ -372,10 +378,12 @@ void editRecord(char password[], records quiz[])
 					fgets(temp.answer, 21,stdin);
 					temp.answer[strcspn(temp.answer,"\n")] = '\0';
 					strcpy(quiz[k].answer, temp.answer);
+					system("cls");
 					printf("Choice 1 for this question has been succesfully edited. Returning to main hub...\n");
 					interface(password, quiz);
 					break;
 				default:
+					system("cls");
 					printf("ERROR!!!\nchoice is not listed in the directory, returning to main hub...\n");
 					interface(password, quiz);
 			}
@@ -405,6 +413,7 @@ void deleteRecord(char password[], records quiz[])
 	choice[strcspn(choice, "\n")] = '\0';
 	if(checkForExistingTopic(choice, list) == 1)
 	{
+		system("cls");
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
 		interface(password, quiz);
 	}
@@ -420,6 +429,7 @@ void deleteRecord(char password[], records quiz[])
 	scanf("%d", &number);
 	if(number > list[topicIndex(choice, list)].amount)
 	{
+		system("cls");
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
 		interface(password, quiz);
 	}
@@ -442,7 +452,7 @@ void deleteRecord(char password[], records quiz[])
 			quiz[m].number = quiz[m].number - 1;
 		}
 	}
-	
+	system("cls");
 	printf("Records chosen has been succesfully deleted. Returning to main hub...\n");
 	interface(password, quiz);
 }
@@ -473,6 +483,7 @@ void importData(char password[], records quiz[])
 		}
 		if(choice != 1 || choice != 2)
 		{
+			system("cls");
 			printf("chosen number is not registered as a choice, type any key to return to main interface...");
 			interface(password, quiz);
 		}
@@ -813,21 +824,21 @@ void PlayInterface(char password[], records quiz[])
 
 void interface(char password[],records quiz[])
 {
-	char result;
+	int result;
 		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
-		scanf("%c", &result);
+		scanf("%d", &result);
 			switch(result)
 			{
-				case '1':
+				case 1:
 					system("cls");
 					ManageStart(password, strlen(password), quiz);
 					recordManager(password, quiz);
 				 	break;
-				case '2':
+				case 2:
 					system("cls");
 					PlayInterface(password,quiz);
 					break;
-				case '3':
+				case 3:
 					system("cls");
 					Exit();
 					break;
