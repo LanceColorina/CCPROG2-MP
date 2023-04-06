@@ -44,6 +44,7 @@ int checkEmptyIndexList(topics list[]);
 void playGame(char password[], records quiz[]);
 void PlayInterface(char password[], records quiz[]);
 void interface(char password[],records quiz[]);
+void arrangeRanking(scores playerInfo[], int n);
 
 int passWordCheck(char password[], int n, char EnteredPassword[])
 {
@@ -463,7 +464,7 @@ void importData(char password[], records quiz[])
 	FILE *fp;
 	char filename[51];
 	char c;
-	int choice = 0, i = 0;
+	int choice = 0, i = checkEmptyIndexQuiz(quiz), j = 0, exist;
 	printf("Enter the name of the file: ");
 	scanf("%c", &c);
 	fgets(filename, 51, stdin);
@@ -484,7 +485,7 @@ void importData(char password[], records quiz[])
 		if(choice != 1 || choice != 2)
 		{
 			system("cls");
-			printf("chosen number is not registered as a choice, type any key to return to main interface...");
+			printf("chosen number is not registered as a choice, type any key to return to main interface...\n");
 			interface(password, quiz);
 		}
 	}
@@ -602,21 +603,25 @@ void displayScore(char password[], records quiz[])
 {
 	FILE *fp;
 	char c;
-	int i = 0;
-	scores list[MAX_RECORDS];
+	int i = 0,j = 0;
+	scores playerInfo[MAX_RECORDS];
 	fp = fopen("scores.txt", "r");
 	if(fp != NULL)
 	{
 	printf("Rankings:\n\n");
 	do{
-		fscanf(fp, "%d", &list[i].rowNum);
-		fscanf(fp, "%s", list[i].Name);
-		fscanf(fp, "%d\n", &list[i].score);
-		printf("%d %s %d\n", list[i].rowNum, list[i].Name, list[i].score);
+		fscanf(fp, "%d", &playerInfo[i].rowNum);
+		fscanf(fp, "%s", playerInfo[i].Name);
+		fscanf(fp, "%d\n", &playerInfo[i].score);
 		i++;
 	}while(!feof(fp) == 1); 
+	arrangeRanking(playerInfo, i);
 	}
 	fclose(fp);
+	for(j = 0; j < i; j++)
+	{
+		printf("%d %s %d\n", playerInfo[j].rowNum, playerInfo[j].Name, playerInfo[j].score);
+	}
 	printf("\nEnter any key to return to Main Hub ");
 	scanf("%c", &c);
 	scanf("%c", &c);
@@ -683,24 +688,52 @@ int checkEmptyIndexList(topics list[])
 	}while(i != MAX_RECORDS);
 	return i;
 }
-
+void arrangeRanking(scores playerInfo[], int n)
+{
+	int i,j,k,min;
+	scores temp;
+	
+	for(i = 0; i < n - 1; i++)
+	{
+		min = i;
+		
+		for(j = i + 1; j < n; j++)
+		{
+			if(playerInfo[i].score < playerInfo[j].score)
+			{
+				min = j;
+			}
+		}
+		if(i != min)
+		{
+			temp = playerInfo[i];
+			playerInfo[i] = playerInfo[min];
+			playerInfo[min] = temp;
+		}
+	}
+	for(k = 0; k < n; k++)
+	{
+		playerInfo[k].rowNum = k + 1;
+	}
+	
+}
 void playGame(char password[], records quiz[])
 {
 	scores playerInfo;
-	int exist; // checks if the input topic is listed
-	int i = 0,j = 0,k,l,m; // int variables for looping
+	int endChoice; // checks if the input topic is listed
+	int i = 0,j = 0,k,l,m = 1,o = 0; // int variables for looping
 	int scoreCount = 0; // counter for the player's score
-	int randomNumber, index; // randomNumber - holder for a random number when choosing questions, index - index of the topic in struct topics
+	int randomNumber, index, end = 0; // randomNumber - holder for a random number when choosing questions, index - index of the topic in struct topics, end - checks if player wants to end the game
 	char choice[21]; // holder for topic choice
 	char answer[31];// holder for player answer choice
-	char c; 
+	char c; //for clearing out the \n in every input
 	topics list[MAX_RECORDS]; // array struct for topics available and amount for each topic
-	int n = organizeTopics(list, quiz);
-	int randomQuestionNumber[checkEmptyIndexList(list)][100]; //2d array for checking if the given topic with question number is already used
+	int n = organizeTopics(list, quiz); // organizes the list of unique topics and the amount of questions listed in the struct
 	printf("Please enter a name: ");
 	scanf("%c", &c);
 	fgets(playerInfo.Name,51,stdin);
 	playerInfo.Name[strcspn(playerInfo.Name, "\n")] = '\0';
+	
 	do{
 		printf("Please Choose a topic: \n");
 		j = 0;
@@ -710,78 +743,76 @@ void playGame(char password[], records quiz[])
 		}while(j < n);
 		fgets(choice,21,stdin);
 		choice[strcspn(choice,"\n")] = '\0';
-		exist = 1;
 		for(k = 0; k < n; k++)
 		{
 			if(strcmp(choice, list[k].genre) == 0)
 			{
-				if(list[k].amount == 0)
-				{
-					system("cls");
-					printf("All questions for this topic is aready used, please try another\n");
-				}
-				else
-					exist = 0;
-					srand(time(0));
-					list[k].amount--;
-					index = k;
-					randomNumber = (rand() % list[k].amount) + 1;
-					system("cls");
+				index = k;
+				system("cls");
 			}	
 		}
-		if(exist == 1)
+		srand(time(0));
+		if(list[index].amount > 1)
 		{
-			system("cls");
-			printf("topic chosen is not listed here try again\n");
+			randomNumber = (rand() % (list[index].amount + 1));
+		}
+		if(list[index].amount == 1)
+		{
+			randomNumber = 1;
 		}
 		
-		if(exist == 0)
-		{ 
-			for(l = i; l > 0; l--)
-			{
-				if(randomQuestionNumber[index][l] != randomNumber)
-				{
-					randomQuestionNumber[index][i] = randomNumber;
-				}
-				else
-					randomQuestionNumber[index][i] = 0;
-			}
-			for(m = 0; m < checkEmptyIndexQuiz(quiz);m++)
-			{
-				if(strcmp(quiz[m].topic, choice) == 0)
-				{
-					if(quiz[m].number == randomNumber || randomNumber == 0)
-					{
-						printf("%d\t\t your score is %d\n", quiz[m].number, scoreCount);
-						printf("%s\n", quiz[m].question);
-						printf("%s\n", quiz[m].choice1);
-						printf("%s\n", quiz[m].choice2);
-						printf("%s\n", quiz[m].choice3);
-						fgets(answer, 31,stdin);
-						answer[strcspn(answer,"\n")] = '\0';	
-						if(strcmp(answer, quiz[m].answer) == 0)
-							{
-								scoreCount++;
-							}	
-					}
-				}
-			} 
-		}
-		if((list[k].amount != 0 && exist == 0) || exist == 0)
+		for(l = 0; l < checkEmptyIndexQuiz(quiz); l++)
 		{
-			i++;
+			if(strcmp(quiz[l].topic, choice) == 0 && randomNumber == quiz[l].number)
+			{
+				printf("%d\t\t your score is %d\n", quiz[l].number, scoreCount);
+				printf("%s\n", quiz[l].question);
+				printf("%s\n", quiz[l].choice1);
+				printf("%s\n", quiz[l].choice2);
+				printf("%s\n", quiz[l].choice3);
+				fgets(answer, 31,stdin);
+				answer[strcspn(answer,"\n")] = '\0';	
+				if(strcmp(answer, quiz[l].answer) == 0)
+				{
+					scoreCount++;
+					printf("Your answer is Correct, would you like to Continue or end the game?(1 - Continue, 2 - end game)\n");
+					
+				}	
+				if(strcmp(answer, quiz[l].answer) != 0)
+				{
+					printf("Your answer is wrong, would you like to try again or end the game?(1 - try again, 2 - end game)\n");	
+				}
+				scanf("%d", &endChoice);
+				scanf("%c", &c);
+				system("cls");
+					if(endChoice == 1)
+					{
+						end = 0;
+					}
+					if(endChoice == 2)
+					{
+						end = 1;
+					}
+			}
 		}
-	}while(i < 8);
+			
+	}while(end == 0);
 	
-	if(scoreCount > 3){
-		printf("Congratulations, you have passed CCPROG2\n");
-		printf("Returning you to the main hub...\n");
+		playerInfo.score = scoreCount;
+		playerInfo.rowNum = 0;
+		FILE *fp;
+		fp = fopen("scores.txt", "a");
+		if(fp != NULL)
+		{
+				fprintf(fp, "%d %s %d\n", playerInfo.rowNum, playerInfo.Name, playerInfo.score);
+		}
+		fclose(fp);
+		system("cls");
+		printf("Thank you for playing who doesnt want to fail CCPROG\n");
+		printf("Mr./Mrs. %s\nScore: %d\n", playerInfo.Name, scoreCount);
+		printf("Returning you to the main hub...\n\n");
 		interface(password, quiz);
-	}
-	else 
-		printf("we are sorry to inform you that you have not passed CCPROG2");
-		printf("Returning you to the main hub...\n");
-		interface(password, quiz);
+	
 }
 
 void PlayInterface(char password[], records quiz[])
@@ -810,7 +841,6 @@ void PlayInterface(char password[], records quiz[])
 			break;
 		case '3':
 			system("cls");
-
 			interface(password, quiz);
 			break;
 		default:
