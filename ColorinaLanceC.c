@@ -38,16 +38,20 @@ typedef struct topicsList{
 void ManageStart(char password[], int n,records quiz[]);
 void Exit();
 int checkEmptyIndexQuiz(records quiz[]);
+int checkTopicIndex(records check, records quiz[]);
 void addRecord(char password[], records quiz[]);
+int checkForExistingTopic(char choice[], topics list[]);
+void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber);
+int topicIndex(char choice[], topics list[]);
 void editRecord(char password[], records quiz[]);
-void deleteRecord();
+void deleteRecord(char password[], records quiz[]);
 void importData(char password[], records quiz[]);
 void ExportData(char password[], records quiz[]);
 void recordManager(char password[], records quiz[]);
 void displayScore(char password[], records quiz[]);
-int checkExistingTopic(topics list[], char topic[21]);
 int organizeTopics(topics list[],records quiz[]);
 int checkEmptyIndexList(topics list[]);
+void arrangeRanking(scores playerInfo[], int n);
 void playGame(char password[], records quiz[]);
 void PlayInterface(char password[], records quiz[]);
 void mainInterface(char password[],records quiz[]);
@@ -216,6 +220,7 @@ void addRecord(char password[], records quiz[])
 	}
 	
 }
+
 int checkForExistingTopic(char choice[], topics list[])
 {
 	int i;
@@ -527,6 +532,7 @@ void ExportData(char password[], records quiz[])
 	mainInterface(password, quiz);
 	
 }
+
 void recordManager(char password[], records quiz[])
 {
 	int choice1;
@@ -639,19 +645,6 @@ void displayScore(char password[], records quiz[])
 			break;
 	}
 }
-
-int checkExistingTopic(topics list[], char topic[21])
-{
-		int i;
-		for(i = 0; i < MAX_RECORDS;i++)
-		{
-			if(strcmp(list[i].genre, topic) == 0)
-			{
-				return 1;
-			}
-		}
-		return 0;
-}
  
 int organizeTopics(topics list[], records quiz[])
 {
@@ -664,7 +657,7 @@ int organizeTopics(topics list[], records quiz[])
 	for(i = 0; i < checkEmptyIndexQuiz(quiz);i++)
 	{
 		count = 0;
-		if(checkExistingTopic(list, quiz[i].topic) == 0)
+		if(checkForExistingTopic(quiz[i].topic, list) == 1)
 		{
 				strcpy(check, quiz[i].topic);
 				for(j = 0; j < MAX_RECORDS;j++)
