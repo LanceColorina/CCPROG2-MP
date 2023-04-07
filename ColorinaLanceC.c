@@ -58,13 +58,19 @@ void mainInterface(char password[],records quiz[]);
 void arrangeRanking(scores playerInfo[], int n);
 
 
-
+/* 
+	ManageStart asks the user to enter the password and checks if the password typed is correct. If password is incorrect, asks the user
+	to choose to go back to the main menu or try again, if correct proceeds to the manage data Interface.
+		@ param password - string of the correct password
+		@ param n - length of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void ManageStart(char password[], int n,records quiz[])
 {
 	int i,pick;
 	char choice;
 	char EnteredPassword[n];
-	while (strcmp(password, EnteredPassword) != 0)
+	while (strcmp(password, EnteredPassword) != 0) 
 	{
 		printf("Please Enter your password: ");
 		
@@ -81,8 +87,6 @@ void ManageStart(char password[], int n,records quiz[])
 			printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
 			scanf("%c", &choice);
 			scanf("%c", &choice);
-			
-			
 			switch(choice)
 			{
 				case 'Y':
@@ -108,7 +112,7 @@ void ManageStart(char password[], int n,records quiz[])
 								mainInterface(password, quiz);
 								break;
 							default:
-								pick = 1;
+								pick = 1; // continues to ask until user either gives Y or N
 						}
 							
 					}while(pick != 0);
@@ -120,12 +124,17 @@ void ManageStart(char password[], int n,records quiz[])
 	
 }
 
+// Exit function for exiting the program
 void Exit()
 {
 	printf("You are now exiting the program\n");
 	printf("Thank you for playing");
 }
 
+/*
+	checkEmptyIndexQuiz checks the quiz records which index in the array does not have a question and returns it to the user
+		@ param records quiz - struct array of the quiz records
+*/
 int checkEmptyIndexQuiz(records quiz[])
 {
 	int i = 0;
@@ -139,9 +148,14 @@ int checkEmptyIndexQuiz(records quiz[])
 	return i;
 }
 
+/*
+	checkTopicIndex - returns the index of the latest quiz record existing with the topic in records check.
+		@ param records check - a struct for checking if the given is existing in quiz records
+		@ param records quiz - struct array of the quiz records
+*/
 int checkTopicIndex(records check, records quiz[])
 {
-	int i, temp = -1;
+	int i, temp = -1; // temp initial value if check does not exist in records
 	for(i = 0; i < checkEmptyIndexQuiz(quiz); i++)
 	{
 		if(strcmp(check.topic, quiz[i].topic) == 0)
@@ -150,17 +164,24 @@ int checkTopicIndex(records check, records quiz[])
 		}
 	}
 	if(temp == -1){
-		return -1;
+		return -1; // returns -1 if the topic in check is not existing in records quiz
 	}
 	else
 		return temp;
 }
+
+/* 
+	addRecord will ask the user a question and an answer and checks if the given is already existing in the records, if it is, it will display the record and 
+	user will be returned back to the manage data interface, if it is not, it will ask for the remaining information and add it to the empty index.
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void addRecord(char password[], records quiz[])
 {
-	records check;
+	records check; // holder for the new records
 	int i;
 	int n = checkEmptyIndexQuiz(quiz);
-	char yes,c;
+	char yes,c; // yes & c - for removes the \n in the scanf
 	
 	if(n == 100)
 	{
@@ -178,7 +199,7 @@ void addRecord(char password[], records quiz[])
 	check.answer[strcspn(check.answer,"\n")] = '\0';
 	for(i = 0; i < n; i++)
 	{
-		if(strcmp(check.question, quiz[i].question) == 0 && strcmp(check.answer, quiz[i].answer) == 0)
+		if(strcmp(check.question, quiz[i].question) == 0 && strcmp(check.answer, quiz[i].answer) == 0) // displays the record if it exists
 		{
 		printf("%s\n", quiz[i].topic);
 		printf("%d\n", quiz[i].number);
@@ -193,16 +214,16 @@ void addRecord(char password[], records quiz[])
 		}
 	}	
 	
-	if(i == n)
+	if(i == n) // if "i" reaches the empty index, will ask for the remaining information
 	{
 		printf("Please input a topic.\n");
 		fgets(check.topic, 21, stdin);
 		check.topic[strcspn(check.topic,"\n")] = '\0';
-		if(checkTopicIndex(check, quiz) > 1)
+		if(checkTopicIndex(check, quiz) > 1) // if the topic given exists, increments the latest records with that topic and puts in the question number
 		{
 		check.number = quiz[checkTopicIndex(check, quiz)].number + 1;
 		}
-			else
+			else // if topic given is unique, makes the question number 1
 				check.number = 1;
 		printf("Please input the first choice.\n");
 		fgets(check.choice1, 31, stdin);
@@ -221,6 +242,11 @@ void addRecord(char password[], records quiz[])
 	
 }
 
+/*
+	checkForExistingTopic returns 0 if the parameter choice is existing in the genre member of struct topics list, returns 1 if not
+		@ param choice - a topic to be checked if existing in list
+		@ param topics list - a struct array contaning the list of unique topics and amount of questions it has
+*/
 int checkForExistingTopic(char choice[], topics list[])
 {
 	int i;
@@ -231,9 +257,16 @@ int checkForExistingTopic(char choice[], topics list[])
 			return 0; 
 		}
 	}
-	return 1;
+	return 1; // returns 1 if choice is a unique topic not listed
 }
 
+/*
+	adjustQuestionNumber organizes the question number in the quiz records if topic is the same and the questionNumber is less than the question
+	number in that same topic in quiz records
+		@ param topic - the topic to be looked in the records
+		@ param records quiz - struct array of the quiz records
+		@ param questionNumber - the question number limit to be adjusted in the records
+*/
 void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber)
 {
 	int i;
@@ -241,30 +274,41 @@ void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber)
 	{
 		if(strcmp(topic, quiz[i].topic) == 0 && questionNumber < quiz[i].number)
 		{
-			quiz[i].number = quiz[i].number - 1;
+			quiz[i].number = quiz[i].number - 1; // decrements the question number if greater than question number and same as topic
 		}
 	}
 }
 
+/*
+	topicIndex returns the index of list with the topic that has the same as parameter choice
+	@ param choice - a string containing the topic to be checked in list
+	@ param topics list - a struct array contaning the list of unique topics and amount of questions it has
+*/
 int topicIndex(char choice[], topics list[])
 {
 	int index,i;
-	for(i = 0; i < MAX_RECORDS;i++)
+	for(i = 0; i < checkEmptyIndexList(list);i++)
 	{
 		if(strcmp(list[i].genre,choice) == 0)
 		{
-			return i;
+			return i; 
 		}
 	}
 	
 	return i;
 }
-
+ 
+/*
+	editRecord displays all the unique topics after choosing, displays the list of questions in the chosen topic along with the question number,
+	after choosing which question to edit, asks the user which information to edit, after succesful edit, proceeds to go back to main menu
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void editRecord(char password[], records quiz[])
 {
 	int i,j,k; //looping variables
 	int number,edit; // number - chosen question number, edit - holds a choice of what to edit
-	char c;
+	char c; // used for removing the \n in scanf
 	records temp; // temporary holder for things to edit
 	char topicTemp[21]; //holder for previous topic before editing
 	int questionNumber; // holds the question number for the edited topic
@@ -272,21 +316,21 @@ void editRecord(char password[], records quiz[])
 	char choice[21]; // choice of topic user would like to edit
 	int n = organizeTopics(list, quiz);
 	printf("Choose a topic you would like to edit here\n");
-	for(i = 0; i < checkEmptyIndexList(list); i++)
+	for(i = 0; i < checkEmptyIndexList(list); i++) // displays the list of unique topics
 	{
 		printf("%s\n",list[i].genre); 
 	}
 	scanf("%c", &c);
 	fgets(choice, 21,stdin);
 	choice[strcspn(choice, "\n")] = '\0';
-	if(checkForExistingTopic(choice, list) == 1)
+	if(checkForExistingTopic(choice, list) == 1) // checks for invalid topic
 	{
 		system("cls");
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
 		mainInterface(password, quiz);
 	}
 	printf("Choose a question to edit\n");
-	for(j = 0; j < checkEmptyIndexQuiz(quiz); j++)
+	for(j = 0; j < checkEmptyIndexQuiz(quiz); j++) // displays the list of questions on that topic
 	{
 		if(strcmp(quiz[j].topic, choice) == 0)
 		{
@@ -295,7 +339,7 @@ void editRecord(char password[], records quiz[])
 		}
 	}
 	scanf("%d", &number);
-	if(number > list[topicIndex(choice, list)].amount)
+	if(number > list[topicIndex(choice, list)].amount)  // checks for invalid question number
 	{
 		system("cls");
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
@@ -307,7 +351,7 @@ void editRecord(char password[], records quiz[])
 	{
 		if((strcmp(choice, quiz[k].topic) == 0) && (number == quiz[k].number))
 		{
-			printf("What would you like to edit for this question?\n(1 - topic ,2 - question? ,3 - choice1 ,4 - choice2 ,5 - choice3 ,6 - answer)\n");
+			printf("What would you like to edit for this question?\n(1 - topic , 2 - question , 3 - choice1 , 4 - choice2 , 5 - choice3 , 6 - answer)\n");
 			printf("%s\n", quiz[k].topic);
 			printf("%s\n", quiz[k].question);
 			printf("%s\n", quiz[k].choice1);
@@ -332,7 +376,7 @@ void editRecord(char password[], records quiz[])
 					}
 						else 
 							quiz[k].number = quiz[checkTopicIndex(temp, quiz)].number + 1;
-							adjustQuestionNumber(topicTemp,quiz, questionNumber);
+							adjustQuestionNumber(topicTemp,quiz, questionNumber); //adjusts the question number if topic is changed
 					system("cls");			
 					printf("Topic for this question has been succesfully edited. Returning to main hub...\n");
 					mainInterface(password, quiz);
@@ -392,10 +436,16 @@ void editRecord(char password[], records quiz[])
 	
 }
 
+/*
+	deleteRecord displays all the unique topics after choosing, displays the list of questions in the chosen topic along with the question number,
+	after choosing which question to delete, asks the user which information to edit, after succesful edit, proceeds to go back to main menu
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void deleteRecord(char password[], records quiz[])
 {
 	int i,j,k,l,m; //looping variables
-	int number,del; // number - chosen question number, del - holds a choice of what to del
+	int number,del,confirm; // number - chosen question number, del - holds a choice of what to del, confirm - checks if the user wants to delete
 	char c;
 	records temp; // temporary holder for things to edit
 	char topicTemp[21]; //holder for previous topic before editing
@@ -404,21 +454,21 @@ void deleteRecord(char password[], records quiz[])
 	char choice[21]; // choice of topic user would like to edit
 	int n = organizeTopics(list, quiz);
 	printf("Choose a topic you would like to Delete here\n");
-	for(i = 0; i < checkEmptyIndexList(list); i++)
+	for(i = 0; i < checkEmptyIndexList(list); i++) //displays unique topics
 	{
 		printf("%s\n",list[i].genre); 
 	}
 	scanf("%c", &c);
 	fgets(choice, 21,stdin);
 	choice[strcspn(choice, "\n")] = '\0';
-	if(checkForExistingTopic(choice, list) == 1)
+	if(checkForExistingTopic(choice, list) == 1) // checks for invalid topic
 	{
 		system("cls");
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
 		mainInterface(password, quiz);
 	}
 	printf("Choose a question to Delete\n");
-	for(j = 0; j < checkEmptyIndexQuiz(quiz); j++)
+	for(j = 0; j < checkEmptyIndexQuiz(quiz); j++) // displays list of questions within the topic
 	{
 		if(strcmp(quiz[j].topic, choice) == 0)
 		{
@@ -427,12 +477,16 @@ void deleteRecord(char password[], records quiz[])
 		}
 	}
 	scanf("%d", &number);
-	if(number > list[topicIndex(choice, list)].amount)
+	printf("Are you sure you want to delete question number %d (1 - yes, 2 - no)?", number);
+	scanf("%d", &confirm);
+	if(number > list[topicIndex(choice, list)].amount) //checks for invalid question number
 	{
 		system("cls");
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
 		mainInterface(password, quiz);
 	}
+	if(confirm == 1) // deletes the record after confirming deletion
+	{
 	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
 	{
 		if((strcmp(choice, quiz[k].topic) == 0) && (number == quiz[k].number))
@@ -455,21 +509,30 @@ void deleteRecord(char password[], records quiz[])
 	system("cls");
 	printf("Records chosen has been succesfully deleted. Returning to main hub...\n");
 	mainInterface(password, quiz);
+	}
+	else //returns user to main interface if deletion is not confirmed
+		system("cls");
+		printf("Deletion terminated. Returning to main hub...\n");
+		mainInterface(password, quiz);
 }
 
-
+/*
+	importData first asks the user the name of the file (including the file extension) and imports all of the contents in records quiz.
+	 	@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void importData(char password[], records quiz[])
 {
 	FILE *fp;
 	char filename[51];
 	char c;
 	int choice = 0, i = checkEmptyIndexQuiz(quiz), j = 0, exist;
-	printf("Enter the name of the file: ");
+	printf("Enter the name of the file (including the file extension): ");
 	scanf("%c", &c);
 	fgets(filename, 51, stdin);
 	filename[strcspn(filename,"\n")] = '\0';
 	fp = fopen(filename, "r");
-	if(fp == NULL)
+	if(fp == NULL) // if file doesn't exist
 	{
 		printf("The file cannot be found, would you like to go back or try again? (1 - go back, 2 - try again)");
 		scanf("%d", &choice);
@@ -481,7 +544,7 @@ void importData(char password[], records quiz[])
 		{
 			importData(password, quiz);
 		}
-		if(choice != 1 && choice != 2)
+		if(choice != 1 && choice != 2) // for invalid choice
 		{
 			system("cls");
 			printf("chosen number is not registered as a choice, returning to  to main interface...\n");
@@ -506,12 +569,17 @@ void importData(char password[], records quiz[])
 	}
 }
 
+/*
+	exportData first asks the user the name of the file (including the file extension) and exports all of the contents in records quiz to the file.
+	 	@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void ExportData(char password[], records quiz[])
 {
 	FILE *fp;
 	int i = 0;
-	char filename[31];
-	char c;
+	char filename[31]; //holder for filename including extension 
+	char c; // for clearing the \n in scanf
 	printf("Where should we export the Data? ");
 	scanf("%c", &c);
 	fgets(filename, 31, stdin);
@@ -533,6 +601,11 @@ void ExportData(char password[], records quiz[])
 	
 }
 
+/* 
+	recordManager asks the user to choose which feature in manage data to use
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void recordManager(char password[], records quiz[])
 {
 	int choice1;
@@ -547,7 +620,7 @@ void recordManager(char password[], records quiz[])
 			break;
 		case 2:
 			system("cls");
-			if(checkEmptyIndexQuiz(quiz) == 0)
+			if(checkEmptyIndexQuiz(quiz) == 0) //if records is empty
 			{
 				printf("There are no existing records to edit, please try again\n");
 				recordManager(password, quiz);
@@ -556,7 +629,7 @@ void recordManager(char password[], records quiz[])
 			break;
 		case 3:
 			system("cls");
-			if(checkEmptyIndexQuiz(quiz) == 0)
+			if(checkEmptyIndexQuiz(quiz) == 0) //if records is empty
 			{
 				printf("There are no existing records to delete, please try again\n");
 				recordManager(password, quiz);
@@ -569,7 +642,7 @@ void recordManager(char password[], records quiz[])
 			break;
 		case 5:
 			system("cls");
-			if(checkEmptyIndexQuiz(quiz) == 0)
+			if(checkEmptyIndexQuiz(quiz) == 0) //if records is empty
 			{
 				printf("There are no existing records to Export, please try again\n");
 				recordManager(password, quiz);
@@ -581,7 +654,7 @@ void recordManager(char password[], records quiz[])
 			mainInterface(password,quiz);
 			break;
 		default:
-			choice2 = '\0';
+			choice2 = '\0'; //for invalid inputs
 			do{
 				printf("Choice of feature is not listed in the directory\n");
 				printf("Would you like to return to the interface or try again? (1 - try again, 2 - return interface) ");
@@ -605,6 +678,12 @@ void recordManager(char password[], records quiz[])
 	}
 }
 
+/* 
+	displayScore accesses the score.txt file and collects the scores, arranges and displays the score in ranking form and return the order and 
+	put inside the score.txt file
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void displayScore(char password[], records quiz[])
 {
 	FILE *fp;
@@ -615,23 +694,25 @@ void displayScore(char password[], records quiz[])
 	fp = fopen("scores.txt", "r");
 	if(fp != NULL)
 	{
-	printf("Rankings:\n\n");
-	do{
-		fscanf(fp, "%s\n", playerInfo[i].Name);
-		fscanf(fp, "%d\n\n", &playerInfo[i].score);
-		i++;
-	}while(!feof(fp) == 1); 
-	arrangeRanking(playerInfo, i);
+		printf("Rankings:\n\n");
+		do{
+			fscanf(fp, "%s\n", playerInfo[i].Name);
+			fscanf(fp, "%d\n\n", &playerInfo[i].score);
+			i++;
+		}while(!feof(fp) == 1); 
+		arrangeRanking(playerInfo, i); //arranges the players according to their rankings
 	}
 	fclose(fp);
-	for(j = 0; j < i; j++)
+	
+	for(j = 0; j < i; j++) //displays the rankings of the player in list
 	{
 		printf("%d %s %d\n", playerInfo[j].rowNum, playerInfo[j].Name, playerInfo[j].score);
 	}
+	
 	fp2 = fopen("scores.txt", "w");
 	for(k = 0; k < i; k++)
 	{
-		fprintf(fp2,"%s\n%d\n\n",playerInfo[k].Name, playerInfo[k].score);
+		fprintf(fp2,"%s\n%d\n\n",playerInfo[k].Name, playerInfo[k].score); // overwrites the order in the .txt file according to the rankings
 	}
 	fclose(fp2);
 	printf("\nPress enter to return to Main Hub ");
@@ -645,7 +726,13 @@ void displayScore(char password[], records quiz[])
 			break;
 	}
 }
- 
+
+/* 
+	organizeTopics organizes the contents of parameter list according to the unique topics and number of questions existing in the records
+	and returns the number of unique topics in the parameter list
+		@ param topics list - array struct contaning the list of unique topics and amount of questions the topic has
+		@ param records quiz - struct array of the quiz records
+*/
 int organizeTopics(topics list[], records quiz[])
 {
 	char check[21];
@@ -654,6 +741,7 @@ int organizeTopics(topics list[], records quiz[])
 	{
 		list[k].genre[0] = '\0';	
 	}
+	
 	for(i = 0; i < checkEmptyIndexQuiz(quiz);i++)
 	{
 		count = 0;
@@ -675,6 +763,10 @@ int organizeTopics(topics list[], records quiz[])
 	return index;
 }
 
+/*
+	checkEmptyIndexList checks the list parameter which index in the array does not have a topic and returns the indexto the user
+		@ param topics list - array struct contaning the list of unique topics and amount of questions the topic has
+*/
 int checkEmptyIndexList(topics list[])
 {
 	int i = 0;
@@ -688,6 +780,11 @@ int checkEmptyIndexList(topics list[])
 	return i;
 }
 
+/*
+	arrangeRanking is a sorting algorithm that sorts the list of players in parameter playerInfo according to the highest to lowest
+		@ param scores playerInfo - array struct containing the player and its score along with its ranking
+		@ param n - number of players existing in records
+*/
 void arrangeRanking(scores playerInfo[], int n)
 {
 	int i,j,k,min;
@@ -718,6 +815,12 @@ void arrangeRanking(scores playerInfo[], int n)
 	
 }
 
+/*
+	playGame asks the user to enter a name and plays the quiz game, he can choose a topic and answer a random question of the chosen topic 
+	infinitely until he/she chooses to end it and puts the information in scores.txt file
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void playGame(char password[], records quiz[])
 {
 	scores playerInfo;
@@ -815,6 +918,11 @@ void playGame(char password[], records quiz[])
 	
 }
 
+/*
+	PlayInterface asks the user which of the features in play he/she wants to use
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void PlayInterface(char password[], records quiz[])
 {
 	char choice;
@@ -827,7 +935,7 @@ void PlayInterface(char password[], records quiz[])
 	{
 		case '1':
 			system("cls");
-			if(checkEmptyIndexQuiz(quiz) == 0)
+			if(checkEmptyIndexQuiz(quiz) == 0) // if records is empty
 			{
 				printf("Error in initiating the game. Please add a record before playing\n");
 				printf("You are now redirected to the play interface\n\n");
@@ -843,7 +951,7 @@ void PlayInterface(char password[], records quiz[])
 			system("cls");
 			mainInterface(password, quiz);
 			break;
-		default:
+		default:			//for invalid inputs
 			system("cls");
 			printf("Choice input is not listed in the directory, Please try again\n\n");
 			PlayInterface(password,quiz);
@@ -852,6 +960,11 @@ void PlayInterface(char password[], records quiz[])
 	
 }
 
+/*
+	mainInterface asks the user which of the features in the main hub he/she wants to use
+		@ param password - string of the correct password
+		@ param records quiz - struct array of the quiz records
+*/
 void mainInterface(char password[],records quiz[])
 {
 	int result;
@@ -872,7 +985,7 @@ void mainInterface(char password[],records quiz[])
 					system("cls");
 					Exit();
 					break;
-				default:
+				default:				// for invalid inputs
 					system("cls");
 					mainInterface(password, quiz);
 					break;	
