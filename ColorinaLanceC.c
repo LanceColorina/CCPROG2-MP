@@ -300,7 +300,7 @@ void editRecord(char password[], records quiz[])
 	printf("Choose a topic you would like to edit here\n");
 	for(i = 0; i < checkEmptyIndexList(list); i++) // displays the list of unique topics
 	{
-		printf("%s\n",list[i].genre); 
+		printf("%s (%d)\n",list[i].genre, list[i].amount); 
 	}
 	scanf("%c", &c);
 	fgets(choice, 21,stdin);
@@ -448,7 +448,7 @@ void deleteRecord(char password[], records quiz[])
 	printf("Choose a topic you would like to Delete here\n");
 	for(i = 0; i < checkEmptyIndexList(list); i++) //displays unique topics
 	{
-		printf("%s\n",list[i].genre); 
+		printf("%s (%d)\n",list[i].genre, list[i].amount); 
 	}
 	scanf("%c", &c);
 	fgets(choice, 21,stdin);
