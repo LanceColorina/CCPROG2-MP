@@ -850,7 +850,7 @@ void playGame(char password[], records quiz[])
 		srand(time(0));
 		if(list[index].amount > 1)
 		{
-			randomNumber = (rand() % (list[index].amount + 1));
+			randomNumber = ((rand() % list[index].amount) + 1);
 		}
 		if(list[index].amount == 1)
 		{
