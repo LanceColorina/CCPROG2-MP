@@ -518,6 +518,8 @@ void importData(char password[], records quiz[])
 	FILE *fp;
 	char filename[51];
 	char c;
+	topics list[MAX_RECORDS];
+	int num = organizeTopics(list, quiz);
 	int choice = 0, i = checkEmptyIndexQuiz(quiz), j = 0, exist;
 	printf("Enter the name of the file (including the file extension): ");
 	scanf("%c", &c);
@@ -546,6 +548,7 @@ void importData(char password[], records quiz[])
 	if(fp != NULL)
 	{
 		do{
+			exist = 0;
 			fscanf(fp, "%s\n", quiz[i].topic);
 			fscanf(fp, "%d\n", &quiz[i].number);
 			fgets(quiz[i].question, 151, fp);
@@ -554,6 +557,22 @@ void importData(char password[], records quiz[])
 			fscanf(fp, "%s\n", quiz[i].choice2);
 			fscanf(fp, "%s\n", quiz[i].choice3);
 			fscanf(fp, "%s\n\n", quiz[i].answer);
+			for(j = 0; j < checkEmptyIndexList(list); j++)
+			{
+				if(strcmp(quiz[i].topic, list[j].genre) == 0 && (quiz[i].number <= list[j].amount))
+				{
+					
+						quiz[i].number = list[j].amount + 1;
+						list[j].amount = list[j].amount + 1;
+						exist = 1;
+				}	
+			}
+			if(exist == 0)
+			{
+				list[checkEmptyIndexList(list)].amount = 1;
+				strcpy(list[checkEmptyIndexList(list)].genre, quiz[i].topic);
+				quiz[i].number = 1;
+			}
 			i++;
 		}while(!feof(fp) == 1);
 		printf("import succesful, returning to main interface...\n");
