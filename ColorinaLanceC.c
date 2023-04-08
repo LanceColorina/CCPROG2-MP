@@ -14,6 +14,7 @@ Colorina, Lance C. , DLSU ID# 12274909
 
 #define MAX_RECORDS 100
 
+//struct for quiz records
 typedef struct records{
 	char topic[21];
 	int number;
@@ -24,12 +25,14 @@ typedef struct records{
 	char answer[31];
 } records;
 
+//struct for player info
 typedef struct scoreList{
 	int rowNum;
 	char Name[51];
 	int score;
 }scores;
 
+//struct for uniquetopics in quiz records and amount of questions
 typedef struct topicsList{
 	char genre[21];
 	int amount;
@@ -167,7 +170,7 @@ int checkTopicIndex(records check, records quiz[])
 		return -1; // returns -1 if the topic in check is not existing in records quiz
 	}
 	else
-		return temp;
+		return i;
 }
 
 /* 
@@ -306,8 +309,8 @@ int topicIndex(char choice[], topics list[])
 */
 void editRecord(char password[], records quiz[])
 {
-	int i,j,k; //looping variables
-	int number,edit; // number - chosen question number, edit - holds a choice of what to edit
+	int i,j,k,l; //looping variables
+	int number,edit,latest = -1; // number - chosen question number, edit - holds a choice of what to edit, latest - latest question number of the topic
 	char c; // used for removing the \n in scanf
 	records temp; // temporary holder for things to edit
 	char topicTemp[21]; //holder for previous topic before editing
@@ -370,13 +373,23 @@ void editRecord(char password[], records quiz[])
 					fgets(temp.topic, 21,stdin);
 					temp.topic[strcspn(temp.topic,"\n")] = '\0';
 					strcpy(quiz[k].topic, temp.topic);
-					if(checkTopicIndex(temp, quiz) > -1)
+					if(topicIndex(temp.topic, list) < checkEmptyIndexList(list)) //adjusts the question number if topic is changed to an existing one
+					{
+						for(l = 0; l < checkEmptyIndexList(list); l++)
+						{
+							if(strcmp(list[l].genre, temp.topic) == 0)
+							{
+								latest = list[l].amount;
+							}
+						}
+						adjustQuestionNumber(topicTemp,quiz, questionNumber);
+						quiz[k].number = latest + 1;
+					} 
+					if(topicIndex(temp.topic, list) == checkEmptyIndexList(list))
 					{
 						quiz[k].number = 1;
-					}
-						else 
-							quiz[k].number = quiz[checkTopicIndex(temp, quiz)].number + 1;
-							adjustQuestionNumber(topicTemp,quiz, questionNumber); //adjusts the question number if topic is changed
+						adjustQuestionNumber(topicTemp,quiz, questionNumber); 	
+					} //sets question number to 1 if topic is unique
 					system("cls");			
 					printf("Topic for this question has been succesfully edited. Returning to main hub...\n");
 					mainInterface(password, quiz);
