@@ -479,30 +479,32 @@ void deleteRecord(char password[], records quiz[])
 	}
 	if(confirm == 1) // deletes the record after confirming deletion
 	{
-	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
-	{
-		if((strcmp(choice, quiz[k].topic) == 0) && (number == quiz[k].number))
+		for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
 		{
-			del = k;
+			if((strcmp(choice, quiz[k].topic) == 0) && (number == quiz[k].number))
+			{
+				del = k;
+			}
 		}
-	}
-	for(l = del; l < checkEmptyIndexQuiz(quiz); l++)
-	{
-		quiz[l] = quiz[l + 1]; 
-	}
-	
-	for(m = 0; m < checkEmptyIndexQuiz(quiz); m++)
-	{
-		if(strcmp(choice, quiz[m].topic) == 0 && number < quiz[m].number)
+		for(l = del; l < checkEmptyIndexQuiz(quiz); l++)
 		{
-			quiz[m].number = quiz[m].number - 1;
+			quiz[l] = quiz[l + 1]; 
 		}
-	}
-	system("cls");
-	printf("Records chosen has been succesfully deleted. Returning to main hub...\n");
-	mainInterface(password, quiz);
+		
+		for(m = 0; m < checkEmptyIndexQuiz(quiz); m++)
+		{
+			if(strcmp(choice, quiz[m].topic) == 0 && number < quiz[m].number)
+			{
+				quiz[m].number = quiz[m].number - 1;
+			}
+		}
+		scanf("%c", &c);
+		system("cls");
+		printf("Records chosen has been succesfully deleted. Returning to main hub...\n");
+		mainInterface(password, quiz);
 	}
 	else //returns user to main interface if deletion is not confirmed
+		scanf("%c", &c);
 		system("cls");
 		printf("Deletion terminated. Returning to main hub...\n");
 		mainInterface(password, quiz);
@@ -565,7 +567,6 @@ void importData(char password[], records quiz[])
 			{
 				if(strcmp(quiz[i].topic, list[j].genre) == 0 && (quiz[i].number <= list[j].amount))
 				{
-					
 						quiz[i].number = list[j].amount + 1;
 						list[j].amount = list[j].amount + 1;
 						exist = 1;
