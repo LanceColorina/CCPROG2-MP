@@ -41,7 +41,6 @@ typedef struct topicsList{
 void ManageStart(char password[], int n,records quiz[]);
 void Exit();
 int checkEmptyIndexQuiz(records quiz[]);
-int checkTopicIndex(records check, records quiz[]);
 void addRecord(char password[], records quiz[]);
 int checkForExistingTopic(char choice[], topics list[]);
 void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber);
@@ -151,28 +150,6 @@ int checkEmptyIndexQuiz(records quiz[])
 	return i;
 }
 
-/*
-	checkTopicIndex - returns the index of the latest quiz record existing with the topic in records check.
-		@ param records check - a struct for checking if the given is existing in quiz records
-		@ param records quiz - struct array of the quiz records
-*/
-int checkTopicIndex(records check, records quiz[])
-{
-	int i, temp = -1; // temp initial value if check does not exist in records
-	for(i = 0; i < checkEmptyIndexQuiz(quiz); i++)
-	{
-		if(strcmp(check.topic, quiz[i].topic) == 0)
-		{
-			temp = i;
-		}
-	}
-	if(temp == -1){
-		return -1; // returns -1 if the topic in check is not existing in records quiz
-	}
-	else
-		return i;
-}
-
 /* 
 	addRecord will ask the user a question and an answer and checks if the given is already existing in the records, if it is, it will display the record and 
 	user will be returned back to the manage data interface, if it is not, it will ask for the remaining information and add it to the empty index.
@@ -183,6 +160,8 @@ void addRecord(char password[], records quiz[])
 {
 	records check; // holder for the new records
 	int i;
+	topics list[MAX_RECORDS];
+	int num = organizeTopics(list, quiz);
 	int n = checkEmptyIndexQuiz(quiz);
 	char yes,c; // yes & c - for removes the \n in the scanf
 	
@@ -222,9 +201,9 @@ void addRecord(char password[], records quiz[])
 		printf("Please input a topic.\n");
 		fgets(check.topic, 21, stdin);
 		check.topic[strcspn(check.topic,"\n")] = '\0';
-		if(checkTopicIndex(check, quiz) > 1) // if the topic given exists, increments the latest records with that topic and puts in the question number
+		if(topicIndex(check.topic,list) < checkEmptyIndexList(list)) // if the topic given exists, increments the latest records with that topic and puts in the question number
 		{
-		check.number = quiz[checkTopicIndex(check, quiz)].number + 1;
+			check.number = list[topicIndex(check.topic,list)].amount + 1;
 		}
 			else // if topic given is unique, makes the question number 1
 				check.number = 1;
