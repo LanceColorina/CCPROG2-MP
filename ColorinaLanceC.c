@@ -94,6 +94,7 @@ void ManageStart(char password[], int n,records quiz[])
 			switch(choice)
 			{
 				case 'Y':
+					ManageStart(password,n,quiz);
 					break;
 				case 'N':
 					mainInterface(password, quiz);
@@ -551,7 +552,6 @@ void importData(char password[], records quiz[])
 	if(fp != NULL)
 	{
 		do{
-			exist = 0;
 			fscanf(fp, "%s\n", quiz[i].topic);
 			fscanf(fp, "%d\n", &quiz[i].number);
 			fgets(quiz[i].question, 151, fp);
@@ -560,6 +560,7 @@ void importData(char password[], records quiz[])
 			fscanf(fp, "%s\n", quiz[i].choice2);
 			fscanf(fp, "%s\n", quiz[i].choice3);
 			fscanf(fp, "%s\n\n", quiz[i].answer);
+			
 			for(j = 0; j < checkEmptyIndexList(list); j++)
 			{
 				if(strcmp(quiz[i].topic, list[j].genre) == 0 && (quiz[i].number <= list[j].amount))
@@ -570,13 +571,16 @@ void importData(char password[], records quiz[])
 						exist = 1;
 				}	
 			}
+ 
 			if(exist == 0)
 			{
 				list[checkEmptyIndexList(list)].amount = 1;
-				strcpy(list[checkEmptyIndexList(list)].genre, quiz[i].topic);
 				quiz[i].number = 1;
+				strcpy(list[checkEmptyIndexList(list)].genre, quiz[i].topic);
 			}
+			
 			i++;
+			
 		}while(!feof(fp) == 1);
 		printf("import succesful, returning to main interface...\n");
 		mainInterface(password, quiz);
@@ -597,7 +601,7 @@ void ExportData(char password[], records quiz[])
 	char filename[31]; //holder for filename including extension 
 	char c; // for clearing the \n in scanf
 	
-	printf("Where should we export the Data? ");
+	printf("Where should we export the Data (Include the file extension)? ");
 	scanf("%c", &c);
 	fgets(filename, 31, stdin);
 	filename[strcspn(filename,"\n")] = '\0';
@@ -972,7 +976,10 @@ void PlayInterface(char password[], records quiz[])
 				printf("You are now redirected to the play interface\n\n");
 				PlayInterface(password,quiz);
 			}
-			playGame(password, quiz);
+			if(checkEmptyIndexQuiz(quiz) > 0)
+			{
+				playGame(password, quiz);	
+			}
 			break;
 		case '2':
 			system("cls");
