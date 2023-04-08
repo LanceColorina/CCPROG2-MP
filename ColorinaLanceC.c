@@ -39,7 +39,6 @@ typedef struct topicsList{
 }topics;
 
 void ManageStart(char password[], int n,records quiz[]);
-void Exit();
 int checkEmptyIndexQuiz(records quiz[]);
 void addRecord(char password[], records quiz[]);
 int checkForExistingTopic(char choice[], topics list[]);
@@ -69,13 +68,11 @@ void arrangeRanking(scores playerInfo[], int n);
 */
 void ManageStart(char password[], int n,records quiz[])
 {
-	int i,pick;
+	int i;
 	
 	char choice;
 	char EnteredPassword[n];
 	
-	while (strcmp(password, EnteredPassword) != 0) 
-	{
 		printf("Please Enter your password: ");
 		
 		for(i = 0; i < n; i++)
@@ -85,7 +82,10 @@ void ManageStart(char password[], int n,records quiz[])
 		}
 			EnteredPassword[i] = '\0';
 			printf("\n");
-	
+		if(strcmp(password, EnteredPassword) == 0)
+		{
+			recordManager(password, quiz);
+		}
 		if (strcmp(password, EnteredPassword) != 0)
 		{
 			printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
@@ -99,8 +99,6 @@ void ManageStart(char password[], int n,records quiz[])
 					mainInterface(password, quiz);
 					break;
 				default:
-					do{
-						pick = 1;
 						printf("Character Input is not listed in the Directory please try again\n");
 						printf("Incorrect Password, would you like to try again or go back to the main menu?(Y - try again, N - go back)\n");
 						scanf("%c", &choice);
@@ -108,31 +106,21 @@ void ManageStart(char password[], int n,records quiz[])
 						switch(choice)
 						{
 							case 'Y':
-								pick = 0;
 								ManageStart(password, strlen(password), quiz);
 								break;
 							case 'N':
-								pick = 0;
 								mainInterface(password, quiz);
 								break;
 							default:
-								pick = 1; // continues to ask until user either gives Y or N
+								printf("ERROR!! INVALID CHOICE, RETURNING TO MAIN MENU\n");
+								mainInterface(password, quiz);
+								break;		
 						}
-							
-					}while(pick != 0);
 					break;
 			}
 		
 		}
-	}
 	
-}
-
-// Exit function for exiting the program
-void Exit()
-{
-	printf("You are now exiting the program\n");
-	printf("Thank you for playing");
 }
 
 /*
@@ -1010,24 +998,24 @@ void PlayInterface(char password[], records quiz[])
 */
 void mainInterface(char password[],records quiz[])
 {
-	int result;
+	char result = '\0';
 	
 		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
-		scanf("%d", &result);
+		scanf("%c", &result);
 			switch(result)
 			{
-				case 1:
+				case '1':
 					system("cls");
 					ManageStart(password, strlen(password), quiz);
-					recordManager(password, quiz);
 				 	break;
-				case 2:
+				case '2':
 					system("cls");
 					PlayInterface(password,quiz);
 					break;
-				case 3:
+				case '3':
 					system("cls");
-					Exit();
+					printf("You are now exiting the program\n");
+					printf("Thank you for playing");
 					break;
 				default:				// for invalid inputs
 					system("cls");
