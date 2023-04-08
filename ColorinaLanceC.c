@@ -70,8 +70,10 @@ void arrangeRanking(scores playerInfo[], int n);
 void ManageStart(char password[], int n,records quiz[])
 {
 	int i,pick;
+	
 	char choice;
 	char EnteredPassword[n];
+	
 	while (strcmp(password, EnteredPassword) != 0) 
 	{
 		printf("Please Enter your password: ");
@@ -159,10 +161,12 @@ int checkEmptyIndexQuiz(records quiz[])
 void addRecord(char password[], records quiz[])
 {
 	records check; // holder for the new records
-	int i;
 	topics list[MAX_RECORDS];
+	
+	int i;
 	int num = organizeTopics(list, quiz);
 	int n = checkEmptyIndexQuiz(quiz);
+	
 	char yes,c; // yes & c - for removes the \n in the scanf
 	
 	if(n == 100)
@@ -269,6 +273,7 @@ void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber)
 int topicIndex(char choice[], topics list[])
 {
 	int index,i;
+	
 	for(i = 0; i < checkEmptyIndexList(list);i++)
 	{
 		if(strcmp(list[i].genre,choice) == 0)
@@ -288,15 +293,18 @@ int topicIndex(char choice[], topics list[])
 */
 void editRecord(char password[], records quiz[])
 {
+	topics list[MAX_RECORDS];
+	records temp; // temporary holder for things to editint i,j,k,l; //looping variables
+	
 	int i,j,k,l; //looping variables
 	int number,edit,latest = -1; // number - chosen question number, edit - holds a choice of what to edit, latest - latest question number of the topic
-	char c; // used for removing the \n in scanf
-	records temp; // temporary holder for things to edit
-	char topicTemp[21]; //holder for previous topic before editing
 	int questionNumber; // holds the question number for the edited topic
-	topics list[MAX_RECORDS];
-	char choice[21]; // choice of topic user would like to edit
 	int n = organizeTopics(list, quiz);
+	
+	char c; // used for removing the \n in scanf
+	char topicTemp[21]; //holder for previous topic before editing
+	char choice[21]; // choice of topic user would like to edit
+	
 	printf("Choose a topic you would like to edit here\n");
 	for(i = 0; i < checkEmptyIndexList(list); i++) // displays the list of unique topics
 	{
@@ -436,15 +444,18 @@ void editRecord(char password[], records quiz[])
 */
 void deleteRecord(char password[], records quiz[])
 {
+	records temp; // temporary holder for things to edit
+	topics list[MAX_RECORDS];
+	
 	int i,j,k,l,m; //looping variables
 	int number,del,confirm; // number - chosen question number, del - holds a choice of what to del, confirm - checks if the user wants to delete
-	char c;
-	records temp; // temporary holder for things to edit
-	char topicTemp[21]; //holder for previous topic before editing
 	int questionNumber; // holds the question number for the edited topic
-	topics list[MAX_RECORDS];
-	char choice[21]; // choice of topic user would like to edit
 	int n = organizeTopics(list, quiz);
+	
+	char c;
+	char topicTemp[21]; //holder for previous topic before editing
+	char choice[21]; // choice of topic user would like to edit
+	
 	printf("Choose a topic you would like to Delete here\n");
 	for(i = 0; i < checkEmptyIndexList(list); i++) //displays unique topics
 	{
@@ -515,12 +526,16 @@ void deleteRecord(char password[], records quiz[])
 */
 void importData(char password[], records quiz[])
 {
+	topics list[MAX_RECORDS];
+	
 	FILE *fp;
+	
 	char filename[51];
 	char c;
-	topics list[MAX_RECORDS];
+	
 	int num = organizeTopics(list, quiz);
 	int choice = 0, i = checkEmptyIndexQuiz(quiz), j = 0, exist;
+	
 	printf("Enter the name of the file (including the file extension): ");
 	scanf("%c", &c);
 	fgets(filename, 51, stdin);
@@ -588,9 +603,12 @@ void importData(char password[], records quiz[])
 void ExportData(char password[], records quiz[])
 {
 	FILE *fp;
+	
 	int i = 0;
+	
 	char filename[31]; //holder for filename including extension 
 	char c; // for clearing the \n in scanf
+	
 	printf("Where should we export the Data? ");
 	scanf("%c", &c);
 	fgets(filename, 31, stdin);
@@ -620,7 +638,9 @@ void ExportData(char password[], records quiz[])
 void recordManager(char password[], records quiz[])
 {
 	int choice1;
+	
 	char choice2;
+	
 	printf("Welcome to the manager data interface, which features would you like to use? \n(1 - Add, 2 - Edit, 3 - Delete, 4 - Import Data, 5 - Export Data, 6 - Go back) ");
 	scanf("%d", &choice1);
 	switch(choice1)
@@ -697,11 +717,15 @@ void recordManager(char password[], records quiz[])
 */
 void displayScore(char password[], records quiz[])
 {
+	scores playerInfo[MAX_RECORDS];
+		
 	FILE *fp;
 	FILE *fp2;
+	
 	char c;
+	
 	int i = 0,j = 0,k = 0;
-	scores playerInfo[MAX_RECORDS];
+	
 	fp = fopen("scores.txt", "r");
 	if(fp != NULL)
 	{
@@ -747,7 +771,9 @@ void displayScore(char password[], records quiz[])
 int organizeTopics(topics list[], records quiz[])
 {
 	char check[21];
+	
 	int i,j,k,count,index = 0;
+	
 	for(k = 0; k < MAX_RECORDS; k++)
 	{
 		list[k].genre[0] = '\0';	
@@ -781,6 +807,7 @@ int organizeTopics(topics list[], records quiz[])
 int checkEmptyIndexList(topics list[])
 {
 	int i = 0;
+	
 	do{
 		if(list[i].genre[0] == '\0')
 		{
@@ -799,6 +826,7 @@ int checkEmptyIndexList(topics list[])
 void arrangeRanking(scores playerInfo[], int n)
 {
 	int i,j,k,min;
+	
 	scores temp;
 	
 	for(i = 0; i < n - 1; i++)
@@ -834,16 +862,19 @@ void arrangeRanking(scores playerInfo[], int n)
 */
 void playGame(char password[], records quiz[])
 {
+	topics list[MAX_RECORDS]; // array struct for topics available and amount for each topic
 	scores playerInfo;
+	
 	int endChoice; // checks if the input topic is listed
 	int i = 0,j = 0,k,l,m = 1,o = 0; // int variables for looping
 	int scoreCount = 0; // counter for the player's score
 	int randomNumber, index, end = 0; // randomNumber - holder for a random number when choosing questions, index - index of the topic in struct topics, end - checks if player wants to end the game
+	int n = organizeTopics(list, quiz); // organizes the list of unique topics and the amount of questions listed in the struct
+	
 	char choice[21]; // holder for topic choice
 	char answer[31];// holder for player answer choice
 	char c; //for clearing out the \n in every input
-	topics list[MAX_RECORDS]; // array struct for topics available and amount for each topic
-	int n = organizeTopics(list, quiz); // organizes the list of unique topics and the amount of questions listed in the struct
+	
 	printf("Please enter a name: ");
 	scanf("%c", &c);
 	fgets(playerInfo.Name,51,stdin);
@@ -937,6 +968,7 @@ void playGame(char password[], records quiz[])
 void PlayInterface(char password[], records quiz[])
 {
 	char choice;
+	
 	printf("Welcome to the main hub of ""Who doesn't want to fail CCPROG2""\n");
 	printf("Which options would you like to use?(1 - Play, 2 - View Scores, 3 - Exit) ");
 	scanf("%c", &choice);
@@ -979,6 +1011,7 @@ void PlayInterface(char password[], records quiz[])
 void mainInterface(char password[],records quiz[])
 {
 	int result;
+	
 		printf("Welcome to who doesn't want to fail CCPROG2!!!\nwhich interface would you like to use? (1 - Manage Data, 2 - Play, 3 - Exit) ");
 		scanf("%d", &result);
 			switch(result)
