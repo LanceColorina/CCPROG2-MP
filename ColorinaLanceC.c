@@ -152,7 +152,7 @@ void addRecord(char password[], records quiz[])
 	records check; // holder for the new records
 	topics list[MAX_RECORDS];
 	
-	int i;
+	int i,exist = 0;
 	int num = organizeTopics(list, quiz);
 	int n = checkEmptyIndexQuiz(quiz);
 	
@@ -186,10 +186,11 @@ void addRecord(char password[], records quiz[])
 		printf("The input question and answer is already existing\n");
 		printf("You will now be redirected to the records interface.\n");
 		recordManager(password, quiz);
+		exist = 1;
 		}
 	}	
 	
-	if(i == n) // if "i" reaches the empty index, will ask for the remaining information
+	if(exist == 0) // if "i" reaches the empty index, will ask for the remaining information
 	{
 		printf("Please input a topic.\n");
 		fgets(check.topic, 21, stdin);
