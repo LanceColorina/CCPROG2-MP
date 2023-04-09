@@ -305,6 +305,7 @@ void editRecord(char password[], records quiz[])
 	if(checkForExistingTopic(choice, list) == 1) // checks for invalid topic
 	{
 		system("cls");
+		scanf("%c", &c);
 		printf("The topic you have input is not in the listed topic, redirecting you to the main hub...\n");
 		mainInterface(password, quiz);
 	}
@@ -321,10 +322,13 @@ void editRecord(char password[], records quiz[])
 	if(number > list[topicIndex(choice, list)].amount)  // checks for invalid question number
 	{
 		system("cls");
+		scanf("%c", &c);
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
 		mainInterface(password, quiz);
 	}
 	
+	if(number < list[topicIndex(choice, list)].amount)
+	{
 	system("cls");
 	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
 	{
@@ -422,6 +426,7 @@ void editRecord(char password[], records quiz[])
 			}
 		}
 	}
+	}
 	
 }
 
@@ -474,10 +479,12 @@ void deleteRecord(char password[], records quiz[])
 	if(number > list[topicIndex(choice, list)].amount) //checks for invalid question number
 	{
 		system("cls");
+		scanf("%c", &c);
 		printf("The question number you have chosen is not in the listed topic, redirecting you to the main hub...\n");
 		mainInterface(password, quiz);
 	}
-	if(confirm == 1) // deletes the record after confirming deletion
+	
+	if(confirm == 1 && number < list[topicIndex(choice, list)].amount) // deletes the record after confirming deletion
 	{
 		for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
 		{
@@ -504,10 +511,13 @@ void deleteRecord(char password[], records quiz[])
 		mainInterface(password, quiz);
 	}
 	else //returns user to main interface if deletion is not confirmed
-		scanf("%c", &c);
-		system("cls");
-		printf("Deletion terminated. Returning to main hub...\n");
-		mainInterface(password, quiz);
+		if(confirm == 2)
+		{
+			scanf("%c", &c);
+			system("cls");
+			printf("Deletion terminated. Returning to main hub...\n");
+			mainInterface(password, quiz);
+		}
 }
 
 /*
@@ -649,7 +659,8 @@ void recordManager(char password[], records quiz[])
 				printf("There are no existing records to edit, please try again\n");
 				recordManager(password, quiz);
 			}
-			editRecord(password, quiz);
+			else
+				editRecord(password, quiz);
 			break;
 		case 3:
 			system("cls");
@@ -658,7 +669,8 @@ void recordManager(char password[], records quiz[])
 				printf("There are no existing records to delete, please try again\n");
 				recordManager(password, quiz);
 			}
-			deleteRecord(password, quiz);
+			else
+				deleteRecord(password, quiz);
 			break;
 		case 4:
 			system("cls");
@@ -671,7 +683,8 @@ void recordManager(char password[], records quiz[])
 				printf("There are no existing records to Export, please try again\n");
 				recordManager(password, quiz);
 			}
-			ExportData(password, quiz);
+			else
+				ExportData(password, quiz);
 			break;
 		case 6:
 			system("cls");
@@ -977,10 +990,8 @@ void PlayInterface(char password[], records quiz[])
 				printf("You are now redirected to the play interface\n\n");
 				PlayInterface(password,quiz);
 			}
-			if(checkEmptyIndexQuiz(quiz) > 0)
-			{
+			else
 				playGame(password, quiz);	
-			}
 			break;
 		case '2':
 			system("cls");
