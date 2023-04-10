@@ -328,7 +328,7 @@ void editRecord(char password[], records quiz[])
 		mainInterface(password, quiz);
 	}
 	
-	if(number < list[topicIndex(choice, list)].amount)
+	if(number <= list[topicIndex(choice, list)].amount)
 	{
 	system("cls");
 	for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
@@ -485,7 +485,7 @@ void deleteRecord(char password[], records quiz[])
 		mainInterface(password, quiz);
 	}
 	
-	if(confirm == 1 && number < list[topicIndex(choice, list)].amount) // deletes the record after confirming deletion
+	if(confirm == 1 && number <= list[topicIndex(choice, list)].amount) // deletes the record after confirming deletion
 	{
 		for(k = 0; k < checkEmptyIndexQuiz(quiz); k++)
 		{
@@ -512,7 +512,7 @@ void deleteRecord(char password[], records quiz[])
 		mainInterface(password, quiz);
 	}
 	else //returns user to main interface if deletion is not confirmed
-		if(confirm == 2)
+		if(confirm == 2 && number <= list[topicIndex(choice, list)].amount)
 		{
 			scanf("%c", &c);
 			system("cls");
@@ -538,10 +538,11 @@ void importData(char password[], records quiz[])
 	int num = organizeTopics(list, quiz);
 	int choice = 0, i = checkEmptyIndexQuiz(quiz), j = 0, exist;
 	
-	printf("Enter the name of the file (including the file extension): ");
+	printf("Enter the name of the file: ");
 	scanf("%c", &c);
 	fgets(filename, 51, stdin);
 	filename[strcspn(filename,"\n")] = '\0';
+	strcat(filename, ".txt");
 	fp = fopen(filename, "r");
 	if(fp == NULL) // if file doesn't exist
 	{
@@ -610,13 +611,14 @@ void ExportData(char password[], records quiz[])
 	
 	int i = 0;
 	
-	char filename[31]; //holder for filename including extension 
+	char filename[51]; //holder for filename including extension 
 	char c; // for clearing the \n in scanf
 	
-	printf("Where should we export the Data (Include the file extension)? ");
+	printf("Where should we export the Data? ");
 	scanf("%c", &c);
 	fgets(filename, 31, stdin);
 	filename[strcspn(filename,"\n")] = '\0';
+	strcat(filename, ".txt");
 	fp = fopen(filename,"w");
 	do{
 		fprintf(fp, "%s\n", quiz[i].topic);
