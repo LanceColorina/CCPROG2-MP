@@ -137,7 +137,7 @@ int checkEmptyIndexQuiz(records quiz[])
 			return i;
 		}
 		i++;
-	}while(i != 100);
+	}while(i != 101);
 	return i;
 }
 
@@ -156,7 +156,7 @@ void addRecord(char password[], records quiz[])
 	int num = organizeTopics(list, quiz);
 	int n = checkEmptyIndexQuiz(quiz);
 	
-	char yes,c; // yes & c - for removes the \n in the scanf
+	char yes; // yes - for removes the \n in the scanf
 	
 	if(n == 100)
 	{
@@ -195,7 +195,7 @@ void addRecord(char password[], records quiz[])
 		printf("Please input a topic.\n");
 		fgets(check.topic, 21, stdin);
 		check.topic[strcspn(check.topic,"\n")] = '\0';
-		if(topicIndex(check.topic,list) < checkEmptyIndexList(list)) // if the topic given exists, increments the latest records with that topic and puts in the question number
+		if(topicIndex(check.topic,list) < num) // if the topic given exists, increments the latest records with that topic and puts in the question number
 		{
 			check.number = list[topicIndex(check.topic,list)].amount + 1;
 		}
@@ -262,7 +262,7 @@ void adjustQuestionNumber(char topic[21], records quiz[], int questionNumber)
 */
 int topicIndex(char choice[], topics list[])
 {
-	int index,i;
+	int i;
 	
 	for(i = 0; i < checkEmptyIndexList(list);i++)
 	{
@@ -296,7 +296,7 @@ void editRecord(char password[], records quiz[])
 	char choice[21]; // choice of topic user would like to edit
 	
 	printf("Choose a topic you would like to edit here\n");
-	for(i = 0; i < checkEmptyIndexList(list); i++) // displays the list of unique topics
+	for(i = 0; i < n; i++) // displays the list of unique topics
 	{
 		printf("%s (%d)\n",list[i].genre, list[i].amount); 
 	}
@@ -439,20 +439,17 @@ void editRecord(char password[], records quiz[])
 */
 void deleteRecord(char password[], records quiz[])
 {
-	records temp; // temporary holder for things to edit
 	topics list[MAX_RECORDS];
 	
 	int i,j,k,l,m; //looping variables
 	int number,del,confirm; // number - chosen question number, del - holds a choice of what to del, confirm - checks if the user wants to delete
-	int questionNumber; // holds the question number for the edited topic
 	int n = organizeTopics(list, quiz);
 	
 	char c;
-	char topicTemp[21]; //holder for previous topic before editing
 	char choice[21]; // choice of topic user would like to edit
 	
 	printf("Choose a topic you would like to Delete here\n");
-	for(i = 0; i < checkEmptyIndexList(list); i++) //displays unique topics
+	for(i = 0; i < n; i++) //displays unique topics
 	{
 		printf("%s (%d)\n",list[i].genre, list[i].amount); 
 	}
@@ -537,7 +534,6 @@ void importData(char password[], records quiz[])
 	
 	int num = organizeTopics(list, quiz);
 	int choice = 0, i = checkEmptyIndexQuiz(quiz), j = 0, exist;
-	
 	printf("Enter the name of the file: ");
 	scanf("%c", &c);
 	fgets(filename, 51, stdin);
@@ -575,7 +571,7 @@ void importData(char password[], records quiz[])
 			fscanf(fp, "%s\n", quiz[i].choice3);
 			fscanf(fp, "%s\n\n", quiz[i].answer);
 			
-			for(j = 0; j < checkEmptyIndexList(list); j++)
+			for(j = 0; j < num; j++)
 			{
 				if(strcmp(quiz[i].topic, list[j].genre) == 0 && (quiz[i].number <= list[j].amount))
 				{
@@ -653,7 +649,13 @@ void recordManager(char password[], records quiz[])
 	{
 		case 1:
 			system("cls");
-			addRecord(password, quiz);
+			if(checkEmptyIndexQuiz(quiz) == MAX_RECORDS + 1)
+				{
+					printf("Records are full, Please remove a record to clear space\n");
+					recordManager(password, quiz);
+				}
+			else
+				addRecord(password, quiz);
 			break;
 		case 2:
 			system("cls");
@@ -875,7 +877,7 @@ void playGame(char password[], records quiz[])
 	scores playerInfo;
 	
 	int endChoice; // checks if the input topic is listed
-	int i = 0,j = 0,k,l,m = 1,o = 0; // int variables for looping
+	int j = 0,k,l; // int variables for looping
 	int scoreCount = 0; // counter for the player's score
 	int randomNumber, index, end = 0; // randomNumber - holder for a random number when choosing questions, index - index of the topic in struct topics, end - checks if player wants to end the game
 	int n = organizeTopics(list, quiz); // organizes the list of unique topics and the amount of questions listed in the struct
